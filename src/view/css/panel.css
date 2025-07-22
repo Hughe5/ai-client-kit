@@ -1,0 +1,147 @@
+/*
+ * Copyright 2025 Hughe5
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.app-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.bottom-container {
+  margin: 12px;
+}
+.action-bar {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.user-input-container {
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(114, 118, 139, 0.16);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+.user-input {
+  border: 0;
+  resize: none;
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.button-wrap {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+}
+.messages-container {
+  flex: 1;
+  padding: 12px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.message {
+  max-width: 80%;
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.content-container {
+  padding: 0 14px;
+  border-radius: 8px;
+  word-wrap: break-word;
+  overflow-x: auto;
+}
+.message.user {
+  margin-left: auto;
+}
+.message.user .content-container {
+  background: #e3f2fd;
+}
+.message.assistant {
+  margin-right: auto;
+}
+.message.assistant .content-container {
+  background: #f1f1f1;
+}
+.button-container {
+  display: flex;
+  margin-top: 4px;
+}
+.button-container button {
+  height: 26px;
+  display: flex;
+  align-items: center;
+}
+.message.user .button-container {
+  justify-content: flex-end;
+}
+.message.assistant .button-container {
+  justify-content: flex-start;
+}
+.history-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.history-item button {
+  display: none;
+}
+.history-item:hover button {
+  display: block;
+}
+.history-item.active {
+  background-color: #f0f0f0;
+  border-left: 4px solid #007bff;
+  border-bottom: 0;
+}
+.history-item-container {
+  width: calc(100% - 60px);
+}
+.history-time {
+  font-size: 12px;
+  color: #666;
+}
+.history-content {
+  margin-top: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.history-empty {
+  text-align: center;
+  color: #666;
+  font-size: 12px;
+  padding: 20px;
+}
+.submit-icon,
+.stop-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  border-radius: 50%;
+  color: #fff;
+}
+.close-icon {
+  transform: translateY(-1px);
+}

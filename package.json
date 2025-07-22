@@ -1,0 +1,65 @@
+{
+  "name": "ai-client-kit",
+  "version": "1.0.0",
+  "description": "一套纯前端 AI 集成套件，支持多模型接入、聊天面板、Function Calling，适用于任意 Web 应用。",
+  "author": {
+    "name": "Hughe5",
+    "email": "2100921003@qq.com",
+    "url": "https://github.com/Hughe5"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hughe5/ai-client-kit.git"
+  },
+  "main": "./dist/ai-client-kit.umd.js",
+  "module": "./dist/ai-client-kit.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/ai-client-kit.mjs",
+      "require": "./dist/ai-client-kit.umd.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext .js,.mjs,.cjs",
+    "lint:fix": "eslint . --ext .js,.mjs,.cjs --fix",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
+  },
+  "keywords": [
+    "ai",
+    "ai-sdk",
+    "ai-integration",
+    "function-calling",
+    "chatbot",
+    "multi-model",
+    "frontend-sdk",
+    "web-sdk",
+    "llm",
+    "large-language-model",
+    "openai-compatible",
+    "ai-client",
+    "ai-chat",
+    "ai-tools"
+  ],
+  "dependencies": {
+    "dayjs": "^1.11.13",
+    "marked": "^16.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.30.1",
+    "eslint": "^9.30.1",
+    "eslint-plugin-prettier": "^5.5.1",
+    "globals": "^16.3.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.2"
+  }
+}

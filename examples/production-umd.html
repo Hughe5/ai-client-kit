@@ -1,0 +1,43 @@
+<!--
+  Copyright 2025 Hughe5
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>production-umd</title>
+  </head>
+  <body>
+    <!-- AI 聊天面板的容器 -->
+    <div id="container" style="width: 430px; height: 620px; border: 1px solid #ccc"></div>
+    <script src="../dist/ai-client-kit.umd.js"></script>
+    <script>
+      const {initAIChatPanel} = window.AIClientKit;
+
+      // 初始化 AI 聊天面板（必要）
+      initAIChatPanel({
+        modelOptions: [
+          {
+            model: 'ernie-4.5-turbo-128k', // 模型 ID
+            url: 'https://your-backend.com/api/chat/completions', // 大模型 API 的代理接口
+          },
+        ],
+        container: document.getElementById('container'),
+      });
+    </script>
+  </body>
+</html>
