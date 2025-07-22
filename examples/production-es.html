@@ -25,7 +25,7 @@
     <!-- AI 聊天面板的容器 -->
     <div id="container" style="width: 430px; height: 620px; border: 1px solid #ccc"></div>
     <script type="module">
-      import {initAIChatPanel, updateSystemMessage, registerTools} from '../dist/ai-client-kit.mjs';
+      import {initAIChatPanel, registerTools} from '../dist/ai-client-kit.mjs';
 
       // 初始化 AI 聊天面板（必要）
       initAIChatPanel({
@@ -37,9 +37,6 @@
         ],
         container: document.getElementById('container'),
       });
-
-      // 聊天之前给大模型设置系统消息（可选）
-      updateSystemMessage('你是一个智能助手，可以协助用户完成多个任务，例如提交差旅申请。');
 
       /**
        * Function calling 能力（可选）
