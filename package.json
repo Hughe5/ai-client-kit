@@ -1,6 +1,6 @@
 {
   "name": "ai-client-kit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "一套纯前端 AI 集成套件，支持多模型接入、聊天面板、Function Calling，适用于任意 Web 应用。",
   "author": {
     "name": "Hughe5",
@@ -35,19 +35,23 @@
   },
   "keywords": [
     "ai",
+    "artificial-intelligence",
     "ai-sdk",
     "ai-integration",
     "function-calling",
     "chatbot",
     "multi-model",
+    "frontend",
     "frontend-sdk",
     "web-sdk",
     "llm",
     "large-language-model",
     "openai-compatible",
     "ai-client",
+    "chat",
     "ai-chat",
-    "ai-tools"
+    "ai-tools",
+    "pure-javascript"
   ],
   "dependencies": {
     "dayjs": "^1.11.13",
