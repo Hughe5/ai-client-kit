@@ -44,7 +44,7 @@
        * definition 工具函数描述
        * implementation 工具函数，必须返回描述结果的字符串
        */
-      registerTools([
+       registerTools([
         {
           definition: {
             type: 'function',
@@ -70,21 +70,16 @@
               },
             },
           },
-          implementation: async function submit_travel_request(params) {
+          implementation: async (params) => {
             // 自研工具函数的逻辑，例如
             try {
-              const payload = {
-                departure_city: params.departure_city,
-                arrival_city: params.arrival_city,
-              };
-
-              // 发起请求（替换为你自己的接口地址和逻辑）
+              // 发起请求（替换为您自己的接口地址和逻辑）
               const response = await fetch('https://api.yourdomain.com/travel/request', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(payload),
+                body: JSON.stringify(params),
               });
 
               const result = await response.json();
