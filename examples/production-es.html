@@ -90,7 +90,7 @@
               const result = await response.json();
 
               if (result.success) {
-                return `提交成功，单据 ID：123456`;
+                return `提交成功，单据 ID：${result.id}`;
               } else {
                 return `提交失败：${result.message || '未知错误'}`;
               }
