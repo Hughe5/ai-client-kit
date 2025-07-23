@@ -159,7 +159,8 @@ export function bindEvents(): void {
 
   // Event Delegation for Copy Buttons
   messagesContainer.addEventListener('click', function (event: MouseEvent) {
-    const copyButton = (event.target as HTMLElement).closest<HTMLElement>('[data-action="copy"]');
+    const target = event.target as HTMLElement;
+    const copyButton = target.closest<HTMLElement>('[data-action="copy"]');
     if (copyButton && !copyButton.classList.contains('copied')) {
       event.stopPropagation();
       const messageElement = copyButton.closest<HTMLElement>('.message')!;
