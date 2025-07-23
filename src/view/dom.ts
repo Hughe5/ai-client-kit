@@ -360,6 +360,6 @@ export const modelRender = {
       fragment.appendChild(opt);
     }
     modelSelect.appendChild(fragment);
-    modelSelect.value = activeOption!.model;
+    modelSelect.value = activeOption.model;
   },
 };
