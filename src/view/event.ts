@@ -165,7 +165,10 @@ export function bindEvents(): void {
       copyButton.classList.add('copied');
       const messageElement = copyButton.closest<HTMLElement>('.message')!;
       const contentContainer = messageElement.querySelector<HTMLElement>('.content-container')!;
-      const text = contentContainer.textContent!;
+      const text = contentContainer.textContent;
+      if (!text) {
+        return;
+      }
       navigator.clipboard
         .writeText(text)
         .catch((err) => {
