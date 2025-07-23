@@ -33,7 +33,7 @@ const handleSubmit = async (): Promise<void> => {
   try {
     buttonRender.chatting();
     userInputRender.toggleReadOnly(true);
-    // 将HTML标签转换为Markdown行内代码块
+    // 将 HTML 标签转换为 Markdown 行内代码块
     const processedContent = userInput.replace(/<([^>]+)>/g, '`<$1>`');
     const userMessage: Message = {role: 'user', content: processedContent};
     sessionStore.addMessage(userMessage);
@@ -127,7 +127,7 @@ export function bindEvents(): void {
 
   historyPopupClose.addEventListener('click', historyRender.closePopup);
 
-  // 绑定history-item点击事件
+  // 绑定 history-item 点击事件
   historyPopupContent.addEventListener('click', (e: MouseEvent) => {
     const target = e.target as HTMLElement;
     const historyItem = target.closest<HTMLElement>('.history-item');
