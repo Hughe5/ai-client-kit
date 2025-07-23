@@ -24,11 +24,16 @@ class AIChatPanel extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
-    this.shadowRoot!.appendChild(template.content.cloneNode(true));
+    if (!this.shadowRoot) {
+      return;
+    }
+    this.shadowRoot.appendChild(template.content.cloneNode(true));
   }
   connectedCallback() {
     // 元素插入 DOM 后，做初始化
-    initView(this.shadowRoot!);
+    if (this.shadowRoot) {
+      initView(this.shadowRoot);
+    }
   }
 }
 
