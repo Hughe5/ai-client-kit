@@ -163,8 +163,14 @@ export function bindEvents(): void {
     const copyButton = target.closest<HTMLElement>('[data-action="copy"]');
     if (copyButton && !copyButton.classList.contains('copied')) {
       event.stopPropagation();
-      const messageElement = copyButton.closest<HTMLElement>('.message')!;
-      const contentContainer = messageElement.querySelector<HTMLElement>('.content-container')!;
+      const messageElement = copyButton.closest<HTMLElement>('.message');
+      if (!messageElement) {
+        return;
+      }
+      const contentContainer = messageElement.querySelector<HTMLElement>('.content-container');
+      if (!contentContainer) {
+        return;
+      }
       const text = contentContainer.textContent;
       if (!text) {
         return;
