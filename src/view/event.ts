@@ -132,8 +132,8 @@ export function bindEvents(): void {
   historyPopupContent.addEventListener('click', (e: MouseEvent) => {
     const target = e.target as HTMLElement;
     const historyItem = target.closest<HTMLElement>('.history-item');
-    if (historyItem) {
-      const time = parseInt(historyItem.dataset.time!);
+    if (historyItem?.dataset.time) {
+      const time = parseInt(historyItem.dataset.time);
       if (target.dataset.action === 'delete') {
         // 删除对应的历史记录
         sessionStore.deleteSession(time);
