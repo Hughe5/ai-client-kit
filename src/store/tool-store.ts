@@ -29,7 +29,7 @@ interface Definition {
 
 type Implementation<TParams> = (params: TParams) => string | Promise<string>;
 
-interface Tool<TParams> {
+export interface Tool<TParams> {
   definition: Definition;
   implementation: Implementation<TParams>;
   name?: string;

@@ -1,6 +1,6 @@
 {
   "name": "ai-client-kit",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "适用于任意前端框架的 AI 集成套件，支持多模型接入、聊天面板、Function Calling 等。",
   "author": {
     "name": "Hughe5",
@@ -12,6 +12,7 @@
     "type": "git",
     "url": "https://github.com/Hughe5/ai-client-kit.git"
   },
+  "types": "dist/index.d.ts",
   "main": "./dist/ai-client-kit.umd.js",
   "module": "./dist/ai-client-kit.mjs",
   "exports": {
@@ -27,7 +28,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && tsc -p tsconfig.json",
     "lint": "eslint . --ext .js,.mjs,.cjs",
     "lint:fix": "eslint . --ext .js,.mjs,.cjs --fix",
     "format": "prettier . --write",
