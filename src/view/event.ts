@@ -28,8 +28,9 @@ import {modelStore} from '../store/model-store';
 
 const handleSubmit = async (): Promise<void> => {
   const userInput = userInputRender.value;
-  if (!userInput) return;
-
+  if (!userInput) {
+    return;
+  }
   try {
     buttonRender.chatting();
     userInputRender.toggleReadOnly(true);
