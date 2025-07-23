@@ -162,13 +162,13 @@ export function bindEvents(): void {
     const copyButton = (event.target as HTMLElement).closest<HTMLElement>('[data-action="copy"]');
     if (copyButton && !copyButton.classList.contains('copied')) {
       event.stopPropagation();
-      copyButton.classList.add('copied');
       const messageElement = copyButton.closest<HTMLElement>('.message')!;
       const contentContainer = messageElement.querySelector<HTMLElement>('.content-container')!;
       const text = contentContainer.textContent;
       if (!text) {
         return;
       }
+      copyButton.classList.add('copied');
       navigator.clipboard
         .writeText(text)
         .catch((err) => {
