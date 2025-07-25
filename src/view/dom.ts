@@ -327,7 +327,9 @@ export const historyRender = {
     const elements = getElements();
     const items = elements.root.querySelectorAll<HTMLElement>('.history-item');
     items.forEach((item) => {
-      item.classList.toggle('active', parseInt(item.dataset.time!) === time);
+      if (item.dataset.time) {
+        item.classList.toggle('active', parseInt(item.dataset.time) === time);
+      }
     });
   },
 };
