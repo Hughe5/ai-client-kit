@@ -153,6 +153,7 @@ function registerTools(
       - `description`: **（必填）** 字符串类型，简要描述工具函数的功能，帮助大模型判断何时调用该工具函数。
 
       - `parameters`: **（必填）** 对象类型，遵循 [OpenAPI Schema Format](https://swagger.io/docs/specification/data-models/data-types/)，用于定义工具函数所需的参数。例如：
+
         ```json
         {
           "type": "object",
