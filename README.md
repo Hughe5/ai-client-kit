@@ -46,18 +46,18 @@ initAIChatPanel({
 
 ### 参数说明
 
-| Parameter              | Type                                   | Required   | Description                     |
-| ---------------------- | -------------------------------------- | :--------: | ------------------------------- |
-| `modelOptions`         | `Array<{model: string; url: string;}>` | Y          | 配置多模型，传入模型 ID + 代理接口地址 |
-| `container`            | `HTMLElement`                          | Y          | 聊天面板挂载的 DOM 容器 |
-| `systemMessageContent` | `string`                               | N          | system message 为 AI 设定角色、行为模式或提供额外的上下文信息 |
+| Parameter              | Type                                   | Required | Description                                                   |
+| ---------------------- | -------------------------------------- | :------: | ------------------------------------------------------------- |
+| `modelOptions`         | `Array<{model: string; url: string;}>` |    Y     | 配置多模型，传入模型 ID + 代理接口地址                        |
+| `container`            | `HTMLElement`                          |    Y     | 聊天面板挂载的 DOM 容器                                       |
+| `systemMessageContent` | `string`                               |    N     | system message 为 AI 设定角色、行为模式或提供额外的上下文信息 |
 
 ### 注意事项
 
-*   `initAIChatPanel` 在 DOM 准备就绪后调用，确保 `container` 元素已存在。
-*   `modelOptions` 数组允许配置多个大模型，默认使用第一个。请确保 `model` 是有效、可用的。
-*   `url` 是大模型文本生成 API 的代理接口，使用后端代理避免直接在 Web 应用中暴露大模型的 API Key 或 Token 等敏感信息。
-*   `systemMessageContent` 建议保持简洁明了，过长或复杂的系统消息可能会影响大模型的理解和性能。
+- `initAIChatPanel` 在 DOM 准备就绪后调用，确保 `container` 元素已存在。
+- `modelOptions` 数组允许配置多个大模型，默认使用第一个。请确保 `model` 是有效、可用的。
+- `url` 是大模型文本生成 API 的代理接口，使用后端代理避免直接在 Web 应用中暴露大模型的 API Key 或 Token 等敏感信息。
+- `systemMessageContent` 建议保持简洁明了，过长或复杂的系统消息可能会影响大模型的理解和性能。
 
 ## 高级用法
 
@@ -91,10 +91,7 @@ registerTools([
               description: '到达城市',
             },
           },
-          required: [
-            'departure_city',
-            'arrival_city',
-          ],
+          required: ['departure_city', 'arrival_city'],
         },
       },
     },
@@ -129,59 +126,58 @@ registerTools([
 ### 函数签名
 
 ```typescript
-function registerTools(tools: Array<{
-  definition: {
-    type: 'function';
-    function: {
-      name: string;
-      description: string;
-      parameters: object; // OpenAPI Schema Format
+function registerTools(
+  tools: Array<{
+    definition: {
+      type: 'function';
+      function: {
+        name: string;
+        description: string;
+        parameters: object; // OpenAPI Schema Format
+      };
     };
-  };
-  implementation: (params: Record<string, any>) => string | Promise<string>;
-}>): void;
+    implementation: (params: Record<string, any>) => string | Promise<string>;
+  }>,
+): void;
 ```
 
 ### 参数说明
 
-*   `tools`: **（必填）** 一个数组，每项代表一个要注册的工具函数。
+- `tools`: **（必填）** 一个数组，每项代表一个要注册的工具函数。
+  - `definition`: **（必填）** 工具函数的定义，向大模型描述工具函数的功能和参数。
+    - `type`: 固定为 `'function'`。
 
-    *   `definition`: **（必填）** 工具函数的定义，向大模型描述工具函数的功能和参数。
+    - `function`: 工具函数的具体描述。
+      - `name`: **（必填）** 字符串类型，工具函数的唯一名称。大模型会根据该名称调用对应工具函数。
 
-        *   `type`: 固定为 `'function'`。
+      - `description`: **（必填）** 字符串类型，简要描述工具函数的功能，帮助大模型判断何时调用该工具函数。
 
-        *   `function`: 工具函数的具体描述。
+      - `parameters`: **（必填）** 对象类型，遵循 [OpenAPI Schema Format](https://swagger.io/docs/specification/data-models/data-types/)，用于定义工具函数所需的参数。例如：
+        ```json
+        {
+          "type": "object",
+          "properties": {
+            "departure_city": {
+              "type": "string",
+              "description": "出发城市"
+            },
+            "arrival_city": {
+              "type": "string",
+              "description": "到达城市"
+            }
+          },
+          "required": ["departure_city", "arrival_city"]
+        }
+        ```
 
-            *   `name`: **（必填）** 字符串类型，工具函数的唯一名称。大模型会根据该名称调用对应工具函数。
+        - `type`: 参数的类型（例如 `'object'`）。
+        - `properties`: 参数的属性，每个属性定义一个参数的名称、类型和描述。
+        - `required`: 数组，列出所有必填参数的名称。
 
-            *   `description`: **（必填）** 字符串类型，简要描述工具函数的功能，帮助大模型判断何时调用该工具函数。
+  - `implementation`: **（必填）** 工具函数的实现，支持同步或异步函数。
+    - 接收一个 `params` 对象作为参数，包含大模型解析后传入的参数值。
 
-            *   `parameters`: **（必填）** 对象类型，遵循 [OpenAPI Schema Format](https://swagger.io/docs/specification/data-models/data-types/)，用于定义工具函数所需的参数。例如：
-                ```json
-                {
-                  "type": "object",
-                  "properties": {
-                    "departure_city": {
-                      "type": "string",
-                      "description": "出发城市"
-                    },
-                    "arrival_city": {
-                      "type": "string",
-                      "description": "到达城市"
-                    }
-                  },
-                  "required": ["departure_city", "arrival_city"]
-                }
-                ```
-                *   `type`: 参数的类型（例如 `'object'`）。
-                *   `properties`: 参数的属性，每个属性定义一个参数的名称、类型和描述。
-                *   `required`: 数组，列出所有必填参数的名称。
-
-    *   `implementation`: **（必填）** 工具函数的实现，支持同步或异步函数。
-
-        *   接收一个 `params` 对象作为参数，包含大模型解析后传入的参数值。
-
-        *   **该函数必须返回一个字符串，表示工具函数执行的结果。**
+    - **该函数必须返回一个字符串，表示工具函数执行的结果。**
 
 ### 工作原理
 
@@ -194,11 +190,11 @@ function registerTools(tools: Array<{
 
 ### 注意事项
 
-*   工具函数的 `description` 越清晰准确，大模型就越能正确地识别和调用。
-*   `parameters` 的定义（特别是 `description`）对于大模型理解参数的含义至关重要。
-*   `implementation` 函数返回的字符串是大模型了解工具函数执行情况的唯一途径。如果函数执行失败，也应该返回一个描述失败原因的字符串。
-*   `implementation` 函数通常是异步的，因为它可能涉及网络请求或其他耗时操作。
-*   在 `implementation` 中，务必处理可能出现的错误（例如网络请求失败），并返回相应的错误信息，以便大模型可以向用户提供有用的反馈。
+- 工具函数的 `description` 越清晰准确，大模型就越能正确地识别和调用。
+- `parameters` 的定义（特别是 `description`）对于大模型理解参数的含义至关重要。
+- `implementation` 函数返回的字符串是大模型了解工具函数执行情况的唯一途径。如果函数执行失败，也应该返回一个描述失败原因的字符串。
+- `implementation` 函数通常是异步的，因为它可能涉及网络请求或其他耗时操作。
+- 在 `implementation` 中，务必处理可能出现的错误（例如网络请求失败），并返回相应的错误信息，以便大模型可以向用户提供有用的反馈。
 
 ## License
 
