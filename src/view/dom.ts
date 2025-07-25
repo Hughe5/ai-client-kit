@@ -324,7 +324,8 @@ export const historyRender = {
     elements.historyPopup.classList.remove('active');
   },
   updateActiveItem(time: number): void {
-    const items = document.querySelectorAll<HTMLElement>('.history-item');
+    const elements = getElements();
+    const items = elements.root.querySelectorAll<HTMLElement>('.history-item');
     items.forEach((item) => {
       item.classList.toggle('active', parseInt(item.dataset.time!) === time);
     });
