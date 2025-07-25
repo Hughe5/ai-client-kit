@@ -81,7 +81,7 @@ function handleSwitchToHistory(time: number): void {
   messagesContainerRender.displaySession(selectedSession);
 
   // 更新选中态样式
-  historyRender.updateActiveItem(time);
+  historyRender.updateActiveItem(selectedSession.time);
 
   // 关闭历史记录弹窗
   // historyRender.closePopup();

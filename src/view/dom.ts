@@ -294,15 +294,9 @@ export const historyRender = {
     getSessionTitle: (session: Session) => string,
   ): void {
     const elements = getElements();
-    const validSessions = sessions.filter((session) =>
-      session.messages.some((message) => message.role === 'user'),
-    );
-    elements.historyPopupContent.innerHTML =
-      validSessions.length === 0
-        ? '<div class="history-empty">暂无历史聊天</div>'
-        : validSessions
-            .map((session) => this.createHistoryItem(session, activeTime, getSessionTitle))
-            .join('');
+    elements.historyPopupContent.innerHTML = sessions
+      .map((session) => this.createHistoryItem(session, activeTime, getSessionTitle))
+      .join('');
   },
   openPopup(
     sessions: Session[],

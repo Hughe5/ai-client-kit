@@ -29,6 +29,7 @@
   padding: 9px 12px;
   animation: slide 3s ease-in-out forwards;
   font-size: 12px;
+  white-space: nowrap;
 }
 @keyframes slide {
   0% {

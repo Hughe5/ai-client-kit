@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {alertRender} from '../view/dom';
+
 export interface Message {
   role: 'system' | 'user' | 'assistant' | 'tool';
   content: string;
@@ -78,15 +80,23 @@ class SessionStore {
     this.#systemMessageContent = messageContent;
   }
 
-  getSessionByTime(time: number): Session {
-    return this.#sessions.find((session) => session.time === time)!;
+  getSessionByTime(time: number): Session | undefined {
+    return this.#sessions.find((session) => session.time === time);
   }
 
   get activeSession(): Session {
-    const session = this.#activeTime
-      ? this.getSessionByTime(this.#activeTime)
-      : this.#sessions[0];
-
+    let session: Session | null = null;
+    if (this.#activeTime) {
+      const found = this.getSessionByTime(this.#activeTime);
+      if (found) {
+        session = found;
+      } else {
+        alertRender.show('当前会话不存在，自动切换至最近的会话');
+        session = this.#sessions[0];
+      }
+    } else {
+      session = this.#sessions[0];
+    }
     if (session.messages.length === 0 && this.#systemMessageContent) {
       session.messages.unshift({
         role: 'system',
@@ -116,8 +126,12 @@ class SessionStore {
   }
 
   switchSession(time: number): Session {
-    const session = this.getSessionByTime(time);
-    this.#activeTime = time;
+    let session = this.getSessionByTime(time);
+    if (!session) {
+      alertRender.show('当前会话不存在，自动切换至最近的会话');
+      session = this.#sessions[0];
+    }
+    this.#activeTime = session.time;
     this.#saveActiveTime();
     return session;
   }

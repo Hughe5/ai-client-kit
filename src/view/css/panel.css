@@ -126,12 +126,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.history-empty {
-  text-align: center;
-  color: #666;
-  font-size: 12px;
-  padding: 20px;
-}
 .submit-icon,
 .stop-icon {
   width: 28px;
