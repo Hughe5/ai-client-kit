@@ -15,7 +15,7 @@
  */
 
 import {processMessageContent} from '../utils/message-content';
-import {modelStore} from '../store/model-store';
+import {ModelOption, modelStore} from '../store/model-store';
 import {Message, Session} from '../store/session-store';
 import dayjs from 'dayjs';
 
@@ -97,14 +97,14 @@ export const messagesContainerRender = {
 
   createCopyButton(message: Message) {
     const template = this._templates.initCopyButton();
-    const buttonContainer = (template.content.cloneNode(true) as DocumentFragment)
-      .firstElementChild!;
-
-    const el = buttonContainer.querySelector('.tooltip-text')!;
-    if (message.role === 'user') {
-      el.classList.add('bottom-left');
-    } else {
-      el.classList.add('bottom-right');
+    const clone = template.content.cloneNode(true) as DocumentFragment;
+    const buttonContainer = clone.firstElementChild;
+    if (!buttonContainer) {
+      return null;
+    }
+    const el = buttonContainer.querySelector('.tooltip-text');
+    if (el) {
+      el.classList.add(message.role === 'user' ? 'bottom-left' : 'bottom-right');
     }
 
     return buttonContainer;
@@ -122,7 +122,10 @@ export const messagesContainerRender = {
     if (isLoading) {
       messageElement.classList.add('loading');
     } else {
-      messageElement.appendChild(this.createCopyButton(message));
+      const button = this.createCopyButton(message);
+      if (button) {
+        messageElement.appendChild(button);
+      }
     }
 
     return messageElement;
@@ -139,13 +142,21 @@ export const messagesContainerRender = {
     const elements = getElements();
 
     const loadingElement = elements.messagesContainer.querySelector('.message.assistant.loading');
-    if (!loadingElement) return;
+    if (!loadingElement) {
+      return;
+    }
 
-    const contentContainer = loadingElement.querySelector('.content-container')!;
+    const contentContainer = loadingElement.querySelector('.content-container');
+    if (!contentContainer) {
+      return;
+    }
     contentContainer.innerHTML = processMessageContent(message, {showLoadingDots: true});
 
     if (!loadingElement.querySelector('.button-container')) {
-      loadingElement.appendChild(this.createCopyButton(message));
+      const button = this.createCopyButton(message);
+      if (button) {
+        loadingElement.appendChild(button);
+      }
     }
   },
 
@@ -357,6 +368,10 @@ export const modelRender = {
       fragment.appendChild(opt);
     }
     modelSelect.appendChild(fragment);
-    modelSelect.value = activeOption.model;
+    this.select(activeOption);
+  },
+  select(option: ModelOption) {
+    const {modelSelect} = getElements();
+    modelSelect.value = option.model;
   },
 };

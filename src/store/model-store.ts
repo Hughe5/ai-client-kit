@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {alertRender, modelRender} from '../view/dom';
+
 export interface ModelOption {
   model: string;
   url: string;
@@ -32,10 +34,8 @@ class ModelStore {
   }
   init(options: ModelOption[]) {
     this.#options = options;
-    if (
-      this.#activeOption &&
-      this.#options.some((item) => item.model === this.#activeOption!.model)
-    ) {
+    const option = this.#activeOption;
+    if (option && this.#options.some((item) => item.model === option.model)) {
       return;
     }
     this.activeOption = this.#options[0];
@@ -51,7 +51,14 @@ class ModelStore {
     return this.#options;
   }
   updateActiveOption(model: string): void {
-    this.activeOption = this.#options.find((item) => item.model === model)!;
+    const option = this.#options.find((item) => item.model === model);
+    if (option) {
+      this.activeOption = option;
+    } else {
+      alertRender.show('未找到对应的选项，自动选择第一个');
+      this.activeOption = this.#options[0];
+      modelRender.select(this.activeOption);
+    }
   }
 }
 
