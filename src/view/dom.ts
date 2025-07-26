@@ -135,7 +135,7 @@ export const messagesContainerRender = {
     const elements = getElements();
     const messageElement = this.createMessage(message);
     elements.messagesContainer.appendChild(messageElement);
-    this.scrollToBottom();
+    messageElement.scrollIntoView({behavior: 'smooth', block: 'start'});
   },
 
   replaceLoading(message: Message) {
@@ -172,10 +172,8 @@ export const messagesContainerRender = {
       content: '',
       isLoading: true,
     };
-
     const messageElement = this.createMessage(loadingMessage);
     elements.messagesContainer.appendChild(messageElement);
-    this.scrollToBottom();
   },
 
   hasLoading(): boolean {
@@ -201,23 +199,6 @@ export const messagesContainerRender = {
     elements.messagesContainer.innerHTML = '';
   },
 
-  _scrollAnimationId: null as number | null,
-
-  scrollToBottom() {
-    if (this._scrollAnimationId) {
-      return;
-    }
-
-    this._scrollAnimationId = requestAnimationFrame(() => {
-      const elements = getElements();
-      elements.messagesContainer.scrollTo({
-        top: elements.messagesContainer.scrollHeight,
-        behavior: 'smooth',
-      });
-      this._scrollAnimationId = null;
-    });
-  },
-
   displaySession(session: Session) {
     const elements = getElements();
     const fragment = document.createDocumentFragment();
@@ -232,7 +213,6 @@ export const messagesContainerRender = {
     }
 
     elements.messagesContainer.appendChild(fragment);
-    this.scrollToBottom();
   },
 };
 
