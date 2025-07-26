@@ -101,6 +101,9 @@
   justify-content: space-between;
   align-items: center;
 }
+.history-item:last-child {
+  border: 0;
+}
 .history-item button {
   display: none;
 }
