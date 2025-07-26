@@ -164,15 +164,13 @@ export const messagesContainerRender = {
     if (this.hasLoading()) {
       return;
     }
-
-    const elements = getElements();
-
     const loadingMessage: Message = {
       role: 'assistant',
       content: '',
       isLoading: true,
     };
     const messageElement = this.createMessage(loadingMessage);
+    const elements = getElements();
     elements.messagesContainer.appendChild(messageElement);
   },
 
