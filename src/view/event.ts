@@ -60,6 +60,7 @@ function handleCreate(): void {
   sessionStore.createSession();
   messagesContainerRender.clear();
   alertRender.show('新聊天已创建');
+  userInputRender.focus();
 }
 
 // 显示历史记录
