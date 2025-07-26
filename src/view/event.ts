@@ -38,7 +38,7 @@ const handleSubmit = async (): Promise<void> => {
     const processedContent = userInput.replace(/<([^>]+)>/g, '`<$1>`');
     const userMessage: Message = {role: 'user', content: processedContent};
     sessionStore.addMessage(userMessage);
-    messagesContainerRender.addMessage(userMessage);
+    messagesContainerRender.addUserMessage(userMessage);
     await chat();
   } finally {
     buttonRender.default();

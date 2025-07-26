@@ -131,7 +131,7 @@ export const messagesContainerRender = {
     return messageElement;
   },
 
-  addMessage(message: Message) {
+  addUserMessage(message: Message) {
     const elements = getElements();
     const messageElement = this.createMessage(message);
     elements.messagesContainer.appendChild(messageElement);
