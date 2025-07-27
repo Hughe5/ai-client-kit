@@ -21,6 +21,30 @@ npm install ai-client-kit
 yarn add ai-client-kit
 ```
 
+## 开发
+
+### 安装依赖
+
+```bash
+npm install
+```
+
+### 运行测试
+
+```bash
+# 运行所有测试
+npm run test:run
+
+# 监听模式运行测试（开发时推荐）
+npm run test
+```
+
+### 构建
+
+```bash
+npm run build
+```
+
 ## 快速开始
 
 ### 初始化 AI 聊天面板

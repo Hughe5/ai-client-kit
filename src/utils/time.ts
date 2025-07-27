@@ -25,7 +25,7 @@ function preprocess(text: string): string {
   // 快速跳过无匹配文本
   if (!PATTERN.test(text)) {
     return text;
-  } 
+  }
 
   const current = dayjs(); // 只调用一次
   // 重置 lastIndex，因为 test 会修改它（正则有全局标志 g）
