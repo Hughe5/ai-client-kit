@@ -26,4 +26,8 @@ lerna-debug.log*
 *.ntvs*
 *.njsproj
 *.sln
-*.sw? 
+*.sw?
+
+# Test coverage
+coverage
+*.lcov 
