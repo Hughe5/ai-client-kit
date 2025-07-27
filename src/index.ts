@@ -19,6 +19,7 @@ import {initView} from './view/index';
 import {ModelOption, modelStore} from './store/model-store';
 import {sessionStore} from './store/session-store';
 import {toolStore, Tool} from './store/tool-store';
+import {tools} from './store/tools';
 
 class AIChatPanel extends HTMLElement {
   constructor() {
@@ -56,4 +57,4 @@ const initAIChatPanel = (config: AIChatPanelConfig): void => {
 
 const registerTools: (tools: Tool<any>[]) => void = toolStore.register.bind(toolStore);
 
-export {initAIChatPanel, registerTools};
+export {initAIChatPanel, registerTools, tools};

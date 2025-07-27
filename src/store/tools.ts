@@ -1,8 +1,8 @@
 import {parseRelativeDate} from '../utils/time';
 import {Tool} from './tool-store';
 
-export const defaultTools: Tool<any>[] = [
-  {
+export const tools: Record<string, Tool<any>> = {
+  parse_relative_date: {
     definition: {
       type: 'function',
       function: {
@@ -24,4 +24,4 @@ export const defaultTools: Tool<any>[] = [
       return parseRelativeDate(params.input);
     },
   },
-];
+};

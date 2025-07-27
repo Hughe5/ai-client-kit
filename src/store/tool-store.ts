@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {defaultTools} from './tools';
-
 interface Definition {
   type: 'function';
   function: {
@@ -40,7 +38,7 @@ export interface Tool<TParams> {
 class ToolStore {
   tools: Tool<any>[] = [];
   register(tools: Tool<any>[]): void {
-    this.tools = [...defaultTools, ...tools].map((item) => ({
+    this.tools = tools.map((item) => ({
       ...item,
       name: item.definition.function.name,
     }));
