@@ -9,6 +9,7 @@
 - 灵活配置系统消息
 - 本地存储和管理聊天记录
 - 接入自定义工具函数（Function Calling，将 AI 聊天与业务逻辑相结合）
+- 提供一些常用的工具函数（如解析相对时间），开发者可按需使用
 - 纯原生实现，技术栈无关，支持任意前端框架（如 React、Vue）或纯 HTML 页面
 
 ## 安装
@@ -89,14 +90,29 @@ initAIChatPanel({
 
 - `AI Client Kit` 支持大模型的 Function Calling（工具函数调用）能力。
 - 大模型在理解用户意图后，自动调用您注册的自定义工具函数，以执行特定任务或获取外部数据。
-- 通过 `registerTools` 函数，可以注册自己的工具函数。
+- `AI Client Kit` 也为您提供了一些常用的工具函数，节省您的开发时间，可按需使用。
+- 通过 `registerTools` 函数向 `AI Client Kit` 注册工具函数。
+
+### 内置工具函数
+
+#### 解析相对时间（tools.parse_relative_date）
+
+**功能说明：**
+- 将相对时间转为绝对时间
+- 支持中文相对时间，如"明天"、"后天"、"大后天"、"本周三"、"下周一下午 3 点"等
+- 返回格式化的时间字符串（YYYY-MM-DD HH:mm:ss）
+
+**使用示例：**
+- 用户输入："明天下午 3 点开会"
+- 大模型调用工具函数解析后返回："2024-01-16 15:00:00"
 
 ### 示例
 
 ```typescript
-import {registerTools} from 'ai-client-kit';
+import {tools, registerTools} from 'ai-client-kit';
 
 registerTools([
+  tools.parse_relative_date, // 可选，根据您的需求判断是否要使用该工具函数
   {
     definition: {
       type: 'function',
