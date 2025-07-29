@@ -89,6 +89,7 @@ initAIChatPanel({
 ### Function Calling（工具函数调用）
 
 - `AI Client Kit` 支持大模型的 Function Calling（工具函数调用）能力。
+- 请确保 `initAIChatPanel` 的 `modelOptions` 参数里每个模型都是支持 Function Calling 的。
 - 大模型在理解用户意图后，自动调用您注册的自定义工具函数，以执行特定任务或获取外部数据。
 - `AI Client Kit` 也为您提供了一些常用的工具函数，节省您的开发时间，可按需使用。
 - 通过 `registerTools` 函数向 `AI Client Kit` 注册工具函数。
