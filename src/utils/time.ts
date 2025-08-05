@@ -48,7 +48,7 @@ function preprocess(text: string): string {
   PATTERN.lastIndex = 0;
 
   return text.replace(PATTERN, (matched) => {
-    const count = matched.length - 2; // "后天" 长度是 2，多的都是 "大"
+    const count = matched.length - 2; // "后天"的长度是 2，减去 2 剩余的就是"大"字的个数
     const daysOffset = 2 + count;
     return current.add(daysOffset, 'day').format('YYYY年MM月DD日');
   });
