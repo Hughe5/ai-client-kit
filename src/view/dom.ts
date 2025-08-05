@@ -132,10 +132,19 @@ export const messagesContainerRender = {
   },
 
   addUserMessage(message: Message) {
-    const elements = getElements();
+    const {messagesContainer} = getElements();
     const messageElement = this.createMessage(message);
-    elements.messagesContainer.appendChild(messageElement);
-    messageElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+    messagesContainer.appendChild(messageElement);
+    /**
+     * 把新加的 user message 滚动到距离顶部 12px 的位置，下面腾出来的空间用来渲染 assistant message
+     * 12px 是两条 message 之间的间距，在 panel.css 里 message 的样式里
+     * 一屏只展示一对 user message 和 assistant message
+     */
+    const MARGIN_BOTTOM = 12;
+    messagesContainer.scrollTo({
+      top: messageElement.offsetTop - MARGIN_BOTTOM,
+      behavior: 'smooth'
+    });
   },
 
   replaceLoading(message: Message) {
