@@ -143,7 +143,7 @@ export const messagesContainerRender = {
     const MARGIN_BOTTOM = 12;
     messagesContainer.scrollTo({
       top: messageElement.offsetTop - MARGIN_BOTTOM,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
   },
 
