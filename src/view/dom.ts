@@ -116,7 +116,7 @@ export const messagesContainerRender = {
     messageElement.className = `message ${role}`;
     const contentContainer = document.createElement('div');
     contentContainer.className = 'content-container';
-    contentContainer.innerHTML = processMessageContent(message, {showLoadingDots: isLoading});
+    contentContainer.innerHTML = processMessageContent(message, {showLoading: isLoading});
     messageElement.appendChild(contentContainer);
 
     if (isLoading) {
@@ -159,7 +159,7 @@ export const messagesContainerRender = {
     if (!contentContainer) {
       return;
     }
-    contentContainer.innerHTML = processMessageContent(message, {showLoadingDots: true});
+    contentContainer.innerHTML = processMessageContent(message, {showLoading: true});
 
     if (!loadingElement.querySelector('.button-container')) {
       const button = this.createCopyButton(message);

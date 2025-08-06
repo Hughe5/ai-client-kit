@@ -18,7 +18,7 @@ import {Message} from '../store/session-store';
 import {marked} from 'marked';
 
 interface ProcessMessageContentOptions {
-  showLoadingDots?: boolean;
+  showLoading?: boolean;
 }
 
 // 使用LRU缓存机制
@@ -69,12 +69,12 @@ export function processMessageContent(
   options: ProcessMessageContentOptions = {},
 ): string {
   const {content, model} = message;
-  const {showLoadingDots = false} = options;
+  const {showLoading = false} = options;
 
   // 获取解析后的内容（缓存策略在函数内部自动判断）
   const parsedContent = getParsedContent(content);
 
-  const res = showLoadingDots ? addLoadingDots(parsedContent) : parsedContent;
+  const res = showLoading ? addLoadingDots(parsedContent) : parsedContent;
 
   // 添加模型信息
   return model ? `<p>${model}</p>${res}` : res;
