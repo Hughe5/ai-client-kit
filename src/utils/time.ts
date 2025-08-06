@@ -54,9 +54,9 @@ function preprocess(text: string): string {
 
 export function parseRelativeDate(text: string) {
   const processed = preprocess(text);
-  const shouldUseStart = /本周|下周|周|星期[一二三四五六日天]/.test(processed);
+  const useStartOfISOWeekAsInstant = /(?:本|这|上|下)?(?:周|星期)/.test(processed);
   const result = chrono.zh.parseDate(processed, {
-    instant: shouldUseStart ? getStartOfISOWeek() : new Date(),
+    instant: useStartOfISOWeekAsInstant ? getStartOfISOWeek() : new Date(),
   });
   if (result) {
     return dayjs(result).format('YYYY-MM-DD HH:mm:ss');
