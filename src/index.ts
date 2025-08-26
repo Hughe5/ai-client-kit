@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import {template} from './view/template';
+import {messagesContainerRender} from './view/dom';
+import {eventManager} from './view/event';
 import {initView} from './view/index';
-import {ModelOption, modelStore} from './store/model-store';
-import {sessionStore} from './store/session-store';
-import {toolStore, Tool} from './store/tool-store';
+import {template} from './view/template';
 import {tools} from './store/tools';
+import {Agent, Message} from './utils/agent';
 
-class AIChatPanel extends HTMLElement {
+class Panel extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
@@ -38,23 +38,30 @@ class AIChatPanel extends HTMLElement {
   }
 }
 
-customElements.define('ai-chat-panel', AIChatPanel);
+customElements.define('ai-chat-panel', Panel);
 
-interface AIChatPanelConfig {
-  modelOptions: ModelOption[];
-  container: HTMLElement;
-  systemMessageContent?: string;
+interface Config {
+  container: HTMLElement | null;
 }
 
-const initAIChatPanel = (config: AIChatPanelConfig): void => {
-  const {modelOptions, container, systemMessageContent} = config;
-  modelStore.init(modelOptions);
-  container.appendChild(document.createElement('ai-chat-panel'));
-  if (systemMessageContent) {
-    sessionStore.updateSystemMessageContent(systemMessageContent);
+class AIChatPanel {
+  on = eventManager.on.bind(eventManager);
+  constructor(config: Config) {
+    const {container} = config;
+    if (!container) {
+      return;
+    }
+    const element = document.createElement('ai-chat-panel');
+    container.appendChild(element);
   }
-};
+  pushMessages(messages: Message[]) {
+    if (!messages.length) {
+      return;
+    }
+    for (const element of messages) {
+      messagesContainerRender.pushMessage(element);
+    }
+  }
+}
 
-const registerTools: (tools: Tool<any>[]) => void = toolStore.register.bind(toolStore);
-
-export {initAIChatPanel, registerTools, tools};
+export {tools, Agent, AIChatPanel};
