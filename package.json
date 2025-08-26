@@ -29,8 +29,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && tsc -p tsconfig.json",
-    "lint": "eslint . --ext .js,.mjs,.cjs",
-    "lint:fix": "eslint . --ext .js,.mjs,.cjs --fix",
+    "lint": "eslint . --ext .js,.mjs,.cjs --fix",
+    "lint:check": "eslint . --ext .js,.mjs,.cjs",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "test": "vitest",
