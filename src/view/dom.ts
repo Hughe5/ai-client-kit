@@ -15,9 +15,7 @@
  */
 
 import {processMessageContent} from '../utils/message-content';
-import {ModelOption, modelStore} from '../store/model-store';
-import {Message, Session} from '../store/session-store';
-import dayjs from 'dayjs';
+import {Message} from '../utils/agent';
 
 interface Elements {
   root: ShadowRoot;
@@ -27,11 +25,6 @@ interface Elements {
   stopIcon: HTMLButtonElement;
   messagesContainer: HTMLElement;
   createButton: HTMLButtonElement;
-  historyButton: HTMLButtonElement;
-  historyPopup: HTMLElement;
-  historyPopupContent: HTMLElement;
-  historyPopupClose: HTMLButtonElement;
-  modelSelect: HTMLSelectElement;
 }
 
 let elements: Elements | null = null;
@@ -43,11 +36,6 @@ const ids: Record<keyof Omit<Elements, 'root'>, string> = {
   stopIcon: 'stop-icon',
   messagesContainer: 'messages-container',
   createButton: 'create-button',
-  historyButton: 'history-button',
-  historyPopup: 'history-popup',
-  historyPopupContent: 'history-popup-content',
-  historyPopupClose: 'history-popup-close',
-  modelSelect: 'model-select',
 };
 
 export function cacheElements(root: ShadowRoot): Elements {
@@ -111,27 +99,23 @@ export const messagesContainerRender = {
   },
 
   createMessage(message: Message) {
-    const {role, isLoading} = message;
+    const {role} = message;
     const messageElement = document.createElement('div');
     messageElement.className = `message ${role}`;
     const contentContainer = document.createElement('div');
     contentContainer.className = 'content-container';
-    contentContainer.innerHTML = processMessageContent(message, {showLoading: isLoading});
+    contentContainer.innerHTML = processMessageContent(message, {showLoading: false});
     messageElement.appendChild(contentContainer);
 
-    if (isLoading) {
-      messageElement.classList.add('loading');
-    } else {
-      const button = this.createCopyButton(message);
-      if (button) {
-        messageElement.appendChild(button);
-      }
+    const button = this.createCopyButton(message);
+    if (button) {
+      messageElement.appendChild(button);
     }
 
     return messageElement;
   },
 
-  addUserMessage(message: Message) {
+  pushMessage(message: Message) {
     const {messagesContainer} = getElements();
     const messageElement = this.createMessage(message);
     messagesContainer.appendChild(messageElement);
@@ -140,86 +124,18 @@ export const messagesContainerRender = {
      * 12px 是两条 message 之间的间距，在 panel.css 里 message 的样式里
      * 一屏只展示一对 user message 和 assistant message
      */
-    const MARGIN_BOTTOM = 12;
-    messagesContainer.scrollTo({
-      top: messageElement.offsetTop - MARGIN_BOTTOM,
-      behavior: 'smooth',
-    });
-  },
-
-  replaceLoading(message: Message) {
-    const elements = getElements();
-
-    const loadingElement = elements.messagesContainer.querySelector('.message.assistant.loading');
-    if (!loadingElement) {
-      return;
-    }
-
-    const contentContainer = loadingElement.querySelector('.content-container');
-    if (!contentContainer) {
-      return;
-    }
-    contentContainer.innerHTML = processMessageContent(message, {showLoading: true});
-
-    if (!loadingElement.querySelector('.button-container')) {
-      const button = this.createCopyButton(message);
-      if (button) {
-        loadingElement.appendChild(button);
-      }
-    }
-  },
-
-  addLoading() {
-    if (this.hasLoading()) {
-      return;
-    }
-    const loadingMessage: Message = {
-      role: 'assistant',
-      content: '',
-      isLoading: true,
-    };
-    const messageElement = this.createMessage(loadingMessage);
-    const elements = getElements();
-    elements.messagesContainer.appendChild(messageElement);
-  },
-
-  hasLoading(): boolean {
-    const elements = getElements();
-    return !!elements.messagesContainer.querySelector('.message.assistant.loading');
-  },
-
-  removeLoading() {
-    const elements = getElements();
-
-    const loadingElement = elements.messagesContainer.querySelector('.message.assistant.loading');
-    if (loadingElement) {
-      loadingElement.classList.remove('loading');
-      const loadingDots = loadingElement.querySelector('.loading-dots');
-      if (loadingDots) {
-        loadingDots.remove();
-      }
+    if (message.role === 'user') {
+      const MARGIN_BOTTOM = 12;
+      messagesContainer.scrollTo({
+        top: messageElement.offsetTop - MARGIN_BOTTOM,
+        behavior: 'smooth',
+      });
     }
   },
 
   clear(): void {
     const elements = getElements();
     elements.messagesContainer.innerHTML = '';
-  },
-
-  displaySession(session: Session) {
-    const elements = getElements();
-    const fragment = document.createDocumentFragment();
-    const messages = session.messages.filter((msg) => ['user', 'assistant'].includes(msg.role));
-
-    for (const message of messages) {
-      if (!message.content) {
-        continue;
-      }
-      const messageElement = this.createMessage(message);
-      fragment.appendChild(messageElement);
-    }
-
-    elements.messagesContainer.appendChild(fragment);
   },
 };
 
@@ -268,64 +184,6 @@ export const buttonRender = {
   },
 };
 
-// 历史记录
-export const historyRender = {
-  createHistoryItem(
-    session: Session,
-    activeTime: number | null,
-    getSessionTitle: (session: Session) => string,
-  ): string {
-    const isActive = activeTime === session.time;
-    return `
-            <div class="history-item ${isActive ? 'active' : ''}" data-time="${session.time}">
-                <div class="history-item-container">
-                    <div class="history-time">${dayjs(session.time).format('YYYY-MM-DD HH:mm:ss')}</div>
-                    <div class="history-content">${getSessionTitle(session)}</div>
-                </div>
-                <button class="text square error" type="button" data-action="delete">删除</button>
-            </div>
-        `;
-  },
-  displayHistory(
-    sessions: Session[],
-    activeTime: number | null,
-    getSessionTitle: (session: Session) => string,
-  ): void {
-    const elements = getElements();
-    elements.historyPopupContent.innerHTML = sessions
-      .map((session) => this.createHistoryItem(session, activeTime, getSessionTitle))
-      .join('');
-  },
-  openPopup(
-    sessions: Session[],
-    activeTime: number | null,
-    getSessionTitle: (session: Session) => string,
-  ): void {
-    const elements = getElements();
-    this.displayHistory(sessions, activeTime, getSessionTitle);
-
-    elements.historyPopup.classList.add('flex');
-
-    requestAnimationFrame(() => {
-      elements.historyPopup.classList.add('active');
-    });
-  },
-  closePopup(): void {
-    const elements = getElements();
-
-    elements.historyPopup.classList.remove('active');
-  },
-  updateActiveItem(time: number): void {
-    const elements = getElements();
-    const items = elements.root.querySelectorAll<HTMLElement>('.history-item');
-    items.forEach((item) => {
-      if (item.dataset.time) {
-        item.classList.toggle('active', parseInt(item.dataset.time) === time);
-      }
-    });
-  },
-};
-
 export const alertRender = {
   show(text: string): void {
     const {root} = getElements();
@@ -340,25 +198,5 @@ export const alertRender = {
     element.addEventListener('animationend', () => {
       element.remove();
     });
-  },
-};
-
-export const modelRender = {
-  init() {
-    const {modelSelect} = getElements();
-    const fragment = document.createDocumentFragment();
-    const {options, activeOption} = modelStore;
-    for (const item of options) {
-      const opt = document.createElement('option');
-      opt.value = item.model;
-      opt.text = item.model;
-      fragment.appendChild(opt);
-    }
-    modelSelect.appendChild(fragment);
-    this.select(activeOption);
-  },
-  select(option: ModelOption) {
-    const {modelSelect} = getElements();
-    modelSelect.value = option.model;
   },
 };
