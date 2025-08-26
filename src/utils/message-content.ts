@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Message} from '../store/session-store';
+import {Message} from './agent';
 import {marked} from 'marked';
 
 interface ProcessMessageContentOptions {
@@ -68,7 +68,7 @@ export function processMessageContent(
   message: Message,
   options: ProcessMessageContentOptions = {},
 ): string {
-  const {content, model} = message;
+  const {content} = message;
   const {showLoading = false} = options;
 
   // 获取解析后的内容（缓存策略在函数内部自动判断）
@@ -76,8 +76,7 @@ export function processMessageContent(
 
   const res = showLoading ? addLoadingDots(parsedContent) : parsedContent;
 
-  // 添加模型信息
-  return model ? `<p>${model}</p>${res}` : res;
+  return res;
 }
 
 const loadingDots = '<p class="loading-dots"></p>';
