@@ -17,7 +17,7 @@
 import {cacheElements} from './dom';
 import {bindEvents} from './event';
 
-export const initView = (root: ShadowRoot): void => {
+export const init = (root: ShadowRoot): void => {
   // 缓存DOM元素
   cacheElements(root);
 

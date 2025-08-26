@@ -16,7 +16,7 @@
 
 import {messagesContainerRender} from './view/dom';
 import {eventManager} from './view/event';
-import {initView} from './view/index';
+import {init} from './view/index';
 import {template} from './view/template';
 import {tools} from './store/tools';
 import {Agent, Message} from './utils/agent';
@@ -33,7 +33,7 @@ class Panel extends HTMLElement {
   connectedCallback() {
     // 元素插入 DOM 后，做初始化
     if (this.shadowRoot) {
-      initView(this.shadowRoot);
+      init(this.shadowRoot);
     }
   }
 }
