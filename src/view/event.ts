@@ -18,28 +18,24 @@ import {
   getElements,
   messagesContainerRender,
   userInputRender,
-  historyRender,
   alertRender,
   buttonRender,
 } from './dom';
-import {chat, handleCancel} from '../utils/chat';
-import {sessionStore, Message} from '../store/session-store';
-import {modelStore} from '../store/model-store';
+import {Message, abort} from '../utils/agent';
 
-const handleSubmit = async (): Promise<void> => {
+const handleSend = async (): Promise<void> => {
   const userInput = userInputRender.value;
   if (!userInput) {
     return;
   }
   try {
     buttonRender.chatting();
+    userInputRender.clear();
     userInputRender.toggleReadOnly(true);
     // 将 HTML 标签转换为 Markdown 行内代码块
     const processedContent = userInput.replace(/<([^>]+)>/g, '`<$1>`');
     const userMessage: Message = {role: 'user', content: processedContent};
-    sessionStore.addMessage(userMessage);
-    messagesContainerRender.addUserMessage(userMessage);
-    await chat();
+    await eventManager.emit('send', userMessage);
   } finally {
     buttonRender.default();
     userInputRender.toggleReadOnly(false);
@@ -49,60 +45,24 @@ const handleSubmit = async (): Promise<void> => {
 
 // 处理停止按钮点击事件
 const handleStop = (): void => {
-  handleCancel();
+  abort();
   buttonRender.default();
   userInputRender.toggleReadOnly(false);
   userInputRender.focus();
 };
 
 // 创建新聊天
-function handleCreate(): void {
-  sessionStore.createSession();
+const handleCreate = async (): Promise<void> => {
   messagesContainerRender.clear();
   alertRender.show('新聊天已创建');
   userInputRender.focus();
-}
-
-// 显示历史记录
-function handleOpenHistoryPopup(): void {
-  historyRender.openPopup(
-    sessionStore.sessions,
-    sessionStore.activeTime,
-    sessionStore.getSessionTitle,
-  );
-}
-
-// 切换历史记录
-function handleSwitchToHistory(time: number): void {
-  const selectedSession = sessionStore.switchSession(time);
-
-  // 清空当前消息容器
-  messagesContainerRender.clear();
-  // 显示选中的历史记录
-  messagesContainerRender.displaySession(selectedSession);
-
-  // 更新选中态样式
-  historyRender.updateActiveItem(selectedSession.time);
-
-  // 关闭历史记录弹窗
-  // historyRender.closePopup();
-}
+  await eventManager.emit('create');
+};
 
 // 初始化事件监听器
 export function bindEvents(): void {
-  const {
-    submitIcon,
-    createButton,
-    historyButton,
-    historyPopupClose,
-    messagesContainer,
-    userInputContainer,
-    userInput,
-    historyPopup,
-    historyPopupContent,
-    modelSelect,
-    stopIcon,
-  } = getElements();
+  const {submitIcon, createButton, messagesContainer, userInputContainer, userInput, stopIcon} =
+    getElements();
 
   userInputContainer.addEventListener('click', (e: MouseEvent) => {
     if (!submitIcon.contains(e.target as Node) && !stopIcon.contains(e.target as Node)) {
@@ -113,51 +73,17 @@ export function bindEvents(): void {
   userInput.addEventListener('keydown', (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit();
+      handleSend();
     }
   });
 
   // 发送按钮点击事件
-  submitIcon.addEventListener('click', handleSubmit);
+  submitIcon.addEventListener('click', handleSend);
 
   // 停止按钮点击事件
   stopIcon.addEventListener('click', handleStop);
 
   createButton.addEventListener('click', handleCreate);
-
-  historyButton.addEventListener('click', handleOpenHistoryPopup);
-
-  historyPopupClose.addEventListener('click', historyRender.closePopup);
-
-  // 绑定 history-item 点击事件
-  historyPopupContent.addEventListener('click', (e: MouseEvent) => {
-    const target = e.target as HTMLElement;
-    const historyItem = target.closest<HTMLElement>('.history-item');
-    if (historyItem?.dataset.time) {
-      const time = parseInt(historyItem.dataset.time);
-      if (target.dataset.action === 'delete') {
-        // 删除对应的历史记录
-        sessionStore.deleteSession(time);
-        if (historyItem.classList.contains('active')) {
-          handleCreate();
-        }
-        historyRender.displayHistory(
-          sessionStore.sessions,
-          sessionStore.activeTime,
-          sessionStore.getSessionTitle,
-        );
-      } else {
-        handleSwitchToHistory(time);
-      }
-    }
-  });
-
-  historyPopup.addEventListener('transitionend', () => {
-    if (historyPopup.classList.contains('active')) {
-      return;
-    }
-    historyPopup.classList.remove('flex');
-  });
 
   // Event Delegation for Copy Buttons
   messagesContainer.addEventListener('click', function (event: MouseEvent) {
@@ -190,9 +116,31 @@ export function bindEvents(): void {
         });
     }
   });
-
-  modelSelect.addEventListener('change', (e: Event) => {
-    const target = e.target as HTMLSelectElement;
-    modelStore.updateActiveOption(target.value);
-  });
 }
+
+type EventType = 'send' | 'create';
+
+type EventListener = (args?: any) => void | Promise<void>;
+
+class EventManager {
+  private events: Record<EventType, EventListener[]> = {
+    send: [],
+    create: [],
+  };
+
+  on(type: EventType, listener: EventListener) {
+    this.events[type].push(listener);
+  }
+
+  async emit(type: EventType, args?: any) {
+    for (const listener of this.events[type]) {
+      try {
+        await listener(args);
+      } catch (error) {
+        console.error(`Error in event listener for ${type}:`, error);
+      }
+    }
+  }
+}
+
+export const eventManager = new EventManager();
