@@ -93,42 +93,6 @@
 .message.assistant .button-container {
   justify-content: flex-start;
 }
-.history-item {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.history-item:last-child {
-  border: 0;
-}
-.history-item button {
-  display: none;
-}
-.history-item:hover button {
-  display: block;
-}
-.history-item.active {
-  background-color: #f0f0f0;
-  border-left: 4px solid #007bff;
-  border-bottom: 0;
-}
-.history-item-container {
-  width: calc(100% - 60px);
-}
-.history-time {
-  font-size: 12px;
-  color: #666;
-}
-.history-content {
-  margin-top: 5px;
-  font-size: 12px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 .submit-icon,
 .stop-icon {
   width: 28px;
@@ -139,7 +103,4 @@
   background-color: black;
   border-radius: 50%;
   color: #fff;
-}
-.close-icon {
-  transform: translateY(-1px);
 }

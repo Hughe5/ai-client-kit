@@ -27,9 +27,6 @@ select:focus-visible {
 .flex {
   display: flex;
 }
-.margin-left-auto {
-  margin-left: auto;
-}
 :host {
   position: relative;
 }
