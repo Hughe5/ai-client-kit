@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import {sessionStore} from '../store/session-store';
-import {cacheElements, modelRender, messagesContainerRender} from './dom';
+import {cacheElements} from './dom';
 import {bindEvents} from './event';
 
 export const initView = (root: ShadowRoot): void => {
@@ -24,10 +23,4 @@ export const initView = (root: ShadowRoot): void => {
 
   // 初始化事件监听器
   bindEvents();
-
-  // 初始化模型选择
-  modelRender.init();
-
-  // 初始化时重新渲染当前会话
-  messagesContainerRender.displaySession(sessionStore.activeSession);
 };
