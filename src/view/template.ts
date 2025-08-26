@@ -42,14 +42,9 @@ template.innerHTML = `
         <div class="messages-container" id="messages-container"></div>
         <div class="bottom-container">
             <div class="action-bar">
-                <select id="model-select"></select>
-                <button class="icon square plain tooltip margin-left-auto" id="create-button" type="button">
+                <button class="icon square plain tooltip" id="create-button" type="button">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 1024 1024"><path d="M597.333 128v85.333H170.667v571.094l75.221-59.094h607.445V426.667h85.334V768A42.667 42.667 0 0 1 896 810.667H275.413L85.333 960V170.667A42.667 42.667 0 0 1 128 128h469.333zm213.334 0V0H896v128h128v85.333H896v128h-85.333v-128h-128V128h128z"/></svg>
-                    <span class="tooltip-text bottom-left">新聊天</span>
-                </button>
-                <button class="icon square plain tooltip" id="history-button" type="button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 1024 1024"><path d="M512 85.333c235.648 0 426.667 191.019 426.667 426.667S747.648 938.667 512 938.667a424.79 424.79 0 0 1-200.875-50.134L85.333 938.667 135.51 712.96A424.79 424.79 0 0 1 85.333 512C85.333 276.352 276.352 85.333 512 85.333zm0 85.334A341.333 341.333 0 0 0 170.667 512c0 56.96 13.909 111.701 40.106 160.683l14.934 27.904-27.99 125.696L323.5 798.379l27.861 14.89A339.413 339.413 0 0 0 512 853.333a341.333 341.333 0 1 0 0-682.666zm42.667 128V512h170.666v85.333h-256V298.667h85.334z"/></svg>
-                    <span class="tooltip-text bottom-left">历史聊天</span>
+                    <span class="tooltip-text bottom-right">新聊天</span>
                 </button>
             </div>
             <div class="user-input-container" id="user-input-container">
@@ -69,17 +64,6 @@ template.innerHTML = `
                     </button>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="popup" id="history-popup">
-        <div class="popup-content-container">
-            <div class="popup-header">
-                <div class="popup-title">历史聊天</div>
-                <button class="icon circle plain" id="history-popup-close" type="button">
-                    <span class="close-icon">x</span>
-                </button>
-            </div>
-            <div class="popup-content" id="history-popup-content"></div>
         </div>
     </div>
 `;
