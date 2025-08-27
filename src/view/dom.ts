@@ -116,6 +116,9 @@ export const messagesContainerRender = {
   },
 
   pushMessage(message: Message) {
+    if (!message) {
+      return;
+    }
     const {messagesContainer} = getElements();
     const messageElement = this.createMessage(message);
     messagesContainer.appendChild(messageElement);
@@ -130,6 +133,15 @@ export const messagesContainerRender = {
         top: messageElement.offsetTop - MARGIN_BOTTOM,
         behavior: 'smooth',
       });
+    }
+  },
+
+  pushMessages(messages: Message[]) {
+    if (!messages.length) {
+      return;
+    }
+    for (const element of messages) {
+      this.pushMessage(element);
     }
   },
 
