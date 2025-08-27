@@ -24,19 +24,6 @@
   <body>
     <!-- AI 聊天面板的容器 -->
     <div id="container" style="width: 430px; height: 620px; border: 1px solid #ccc"></div>
-    <script type="module">
-      import {initAIChatPanel} from '../src/index.ts';
-
-      // 初始化 AI 聊天面板（必要）
-      initAIChatPanel({
-        modelOptions: [
-          {
-            model: 'ernie-4.5-turbo-128k', // 模型 ID
-            url: 'https://your-backend.com/api/chat/completions', // 大模型 API 的代理接口
-          },
-        ],
-        container: document.getElementById('container'),
-      });
-    </script>
+    <script type="module" src="./development.ts"></script>
   </body>
 </html>
