@@ -35,6 +35,7 @@ const handleSend = async (): Promise<void> => {
     // 将 HTML 标签转换为 Markdown 行内代码块
     const processedContent = userInput.replace(/<([^>]+)>/g, '`<$1>`');
     const userMessage: Message = {role: 'user', content: processedContent};
+    messagesContainerRender.pushMessage(userMessage);
     await eventManager.emit('send', userMessage);
   } finally {
     buttonRender.default();
