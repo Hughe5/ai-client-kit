@@ -209,7 +209,7 @@ export class ToolManager {
 interface Config {
   model: string;
   url: string;
-  systemMessageContent: string;
+  systemMessageContent?: string;
   maxRounds?: number;
 }
 
@@ -238,7 +238,7 @@ export type Message =
     };
 
 interface Params {
-  tools: string[];
+  tools?: string[];
   roundsLeft?: number;
 }
 
@@ -271,7 +271,7 @@ export class Agent extends ToolManager {
     this.messages.push(...messages);
   }
 
-  async invoke({tools, roundsLeft = this.maxRounds}: Params): Promise<void> {
+  async invoke({tools = [], roundsLeft = this.maxRounds}: Params): Promise<void> {
     abort();
     controller = new AbortController();
     try {
