@@ -51,7 +51,7 @@ class AIChatPanel {
   constructor(config: Config) {
     const {container} = config;
     if (!container) {
-      return;
+      throw new Error('未提供有效的 container');
     }
     const element = document.createElement('ai-chat-panel');
     container.appendChild(element);
