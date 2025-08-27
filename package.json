@@ -58,6 +58,7 @@
     "pure-javascript"
   ],
   "dependencies": {
+    "ajv": "^8.17.1",
     "chrono-node": "^2.8.3",
     "dayjs": "^1.11.13",
     "marked": "^16.0.0"
