@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
+import type {Definition} from '../utils/agent';
 import {parseRelativeDate} from '../utils/time';
-import {Tool} from './tool-store';
 
-export const tools: Record<string, Tool<any>> = {
+export const tools = {
   parse_relative_date: {
-    definition: {
+    def: {
       type: 'function',
       function: {
         name: 'parse_relative_date',
@@ -35,8 +35,8 @@ export const tools: Record<string, Tool<any>> = {
           required: ['input'],
         },
       },
-    },
-    implementation: (params: {input: string}) => {
+    } satisfies Definition,
+    handler: (params: {input: string}) => {
       return parseRelativeDate(params.input);
     },
   },
