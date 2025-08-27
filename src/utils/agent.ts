@@ -25,53 +25,67 @@ export function abort(): void {
   }
 }
 
+type ParameterType = 'string' | 'number' | 'integer' | 'boolean' | 'array' | 'object';
+
+interface StringParameter<T extends ParameterType> {
+  type: T;
+  description?: string;
+  enum?: string[];
+  pattern?: string;
+  format?: string;
+  default?: string;
+  minLength?: number;
+  maxLength?: number;
+}
+
+interface NumberParameter<T extends ParameterType> {
+  type: T;
+  description?: string;
+  enum?: number[];
+  minimum?: number;
+  maximum?: number;
+  default?: number;
+  exclusiveMinimum?: number;
+  exclusiveMaximum?: number;
+  multipleOf?: number;
+}
+
+interface BooleanParameter<T extends ParameterType> {
+  type: T;
+  description?: string;
+  default?: boolean;
+}
+
+interface ArrayParameter<T extends ParameterType> {
+  type: T;
+  description?: string;
+  items: Parameters;
+  minItems?: number;
+  maxItems?: number;
+  uniqueItems?: boolean;
+  default?: unknown[];
+}
+
+interface ObjectParameter<T extends ParameterType> {
+  type: T;
+  description?: string;
+  properties: Record<string, Parameters>;
+  required?: string[];
+  default?: Record<string, unknown>;
+  additionalProperties?: boolean; // 是否允许额外字段
+}
+
 export type Parameters =
-  | {
-      type: 'string';
-      description?: string;
-      enum?: string[];
-      pattern?: string;
-      format?: string;
-      default?: string;
-      minLength?: number;
-      maxLength?: number;
-    }
-  | {
-      type: 'number' | 'integer';
-      description?: string;
-      enum?: number[];
-      minimum?: number;
-      maximum?: number;
-      default?: number;
-      exclusiveMinimum?: number;
-      exclusiveMaximum?: number;
-      multipleOf?: number;
-    }
-  | {
-      type: 'boolean';
-      description?: string;
-      default?: boolean;
-    }
-  | {
-      type: 'array';
-      description?: string;
-      items: Parameters;
-      minItems?: number;
-      maxItems?: number;
-      uniqueItems?: boolean;
-      default?: unknown[];
-    }
-  | {
-      type: 'object';
-      description?: string;
-      properties: Record<string, Parameters>;
-      required?: string[];
-      default?: Record<string, unknown>;
-      additionalProperties?: boolean; // 是否允许额外字段
-    };
+  | StringParameter<'string'>
+  | NumberParameter<'number' | 'integer'>
+  | BooleanParameter<'boolean'>
+  | ArrayParameter<'array'>
+  | ObjectParameter<'object'>;
+
+type DefinitionType = 'function';
 
 export interface Definition {
-  type: 'function';
+  type: DefinitionType;
   function: {
     name: string;
     description: string;
