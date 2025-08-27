@@ -255,6 +255,10 @@ export class Agent extends ToolManager {
   url = '';
   messages: Message[] = [];
   maxRounds = 4;
+  defaultParams: Params = {
+    tools: [],
+    roundsLeft: this.maxRounds,
+  };
 
   constructor(config: Config) {
     super();
@@ -288,7 +292,8 @@ export class Agent extends ToolManager {
     }
   }
 
-  async invoke({tools = [], roundsLeft = this.maxRounds}: Params): Promise<AssistantMessage<'assistant'> | undefined> {
+  async invoke(params = this.defaultParams): Promise<AssistantMessage<'assistant'> | undefined> {
+    const {tools = [], roundsLeft = this.maxRounds} = params;
     abort();
     controller = new AbortController();
     try {
