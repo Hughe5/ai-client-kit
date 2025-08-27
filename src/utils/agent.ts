@@ -264,11 +264,20 @@ export class Agent extends ToolManager {
     }
   }
 
+  pushMessage(message: Message) {
+    if (!message) {
+      return;
+    }
+    this.messages.push(message);
+  }
+
   pushMessages(messages: Message[]) {
     if (!messages.length) {
       return;
     }
-    this.messages.push(...messages);
+    for (const element of messages) {
+      this.pushMessage(element);
+    }
   }
 
   async invoke({tools = [], roundsLeft = this.maxRounds}: Params): Promise<void> {
