@@ -221,21 +221,29 @@ type ToolCall = {
   };
 };
 
+type Role = 'system' | 'user' | 'assistant' | 'tool';
+
+interface SimpleMessage<T extends Role> {
+  role: T;
+  content: string;
+}
+
+interface AssistantMessage<T extends Role> {
+  role: T;
+  content: string;
+  tool_calls?: ToolCall[];
+}
+
+interface ToolMessage<T extends Role> {
+  role: T;
+  content: string;
+  tool_call_id: string;
+}
+
 export type Message =
-  | {
-      role: 'system' | 'user';
-      content: string;
-    }
-  | {
-      role: 'assistant';
-      content: string;
-      tool_calls?: ToolCall[];
-    }
-  | {
-      role: 'tool';
-      content: string;
-      tool_call_id: string;
-    };
+  | SimpleMessage<'system' | 'user'>
+  | AssistantMessage<'assistant'>
+  | ToolMessage<'tool'>;
 
 interface Params {
   tools?: string[];
@@ -280,7 +288,7 @@ export class Agent extends ToolManager {
     }
   }
 
-  async invoke({tools = [], roundsLeft = this.maxRounds}: Params): Promise<void> {
+  async invoke({tools = [], roundsLeft = this.maxRounds}: Params): Promise<AssistantMessage<'assistant'> | undefined> {
     abort();
     controller = new AbortController();
     try {
@@ -296,17 +304,15 @@ export class Agent extends ToolManager {
         }),
         signal: controller.signal,
       });
+
       if (controller.signal.aborted) {
         throw new DOMException('请求已被取消', 'AbortError');
       }
+
       const result = await response.json();
 
       const message = result?.choices?.[0]?.message as
-        | {
-            content: string;
-            role: 'assistant';
-            tool_calls?: ToolCall[];
-          }
+        | AssistantMessage<'assistant'>
         | undefined;
 
       if (!message) {
@@ -316,7 +322,7 @@ export class Agent extends ToolManager {
       const {content, role, tool_calls} = message;
 
       if (!tool_calls?.length) {
-        return;
+        return message;
       }
 
       this.messages.push({
@@ -324,6 +330,7 @@ export class Agent extends ToolManager {
         role,
         tool_calls,
       });
+      
       const promises = tool_calls.map(async (element) => {
         const {
           function: {name, arguments: args},
@@ -340,7 +347,7 @@ export class Agent extends ToolManager {
 
       // 剩余轮次 > 0 时继续回调
       if (roundsLeft - 1 > 0) {
-        await this.invoke({tools: [], roundsLeft: roundsLeft - 1});
+        return await this.invoke({tools: [], roundsLeft: roundsLeft - 1});
       }
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
