@@ -46,6 +46,8 @@ interface Config {
 
 class AIChatPanel {
   on = eventManager.on.bind(eventManager);
+  pushMessage = messagesContainerRender.pushMessage.bind(messagesContainerRender);
+  pushMessages = messagesContainerRender.pushMessages.bind(messagesContainerRender);
   constructor(config: Config) {
     const {container} = config;
     if (!container) {
@@ -53,14 +55,6 @@ class AIChatPanel {
     }
     const element = document.createElement('ai-chat-panel');
     container.appendChild(element);
-  }
-  pushMessages(messages: Message[]) {
-    if (!messages.length) {
-      return;
-    }
-    for (const element of messages) {
-      messagesContainerRender.pushMessage(element);
-    }
   }
 }
 
