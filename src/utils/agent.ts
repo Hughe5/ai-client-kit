@@ -232,6 +232,7 @@ interface AssistantMessage<T extends Role> {
   role: T;
   content: string;
   tool_calls?: ToolCall[];
+  showLoading?: boolean;
 }
 
 interface ToolMessage<T extends Role> {
@@ -316,9 +317,7 @@ export class Agent extends ToolManager {
 
       const result = await response.json();
 
-      const message = result?.choices?.[0]?.message as
-        | AssistantMessage<'assistant'>
-        | undefined;
+      const message = result?.choices?.[0]?.message as AssistantMessage<'assistant'> | undefined;
 
       if (!message) {
         return;
@@ -335,7 +334,7 @@ export class Agent extends ToolManager {
         role,
         tool_calls,
       });
-      
+
       const promises = tool_calls.map(async (element) => {
         const {
           function: {name, arguments: args},
