@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Message} from './agent';
+import type {Message} from './agent';
 import {marked} from 'marked';
 
 interface ProcessMessageContentOptions {

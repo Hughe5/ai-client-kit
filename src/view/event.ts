@@ -21,7 +21,7 @@ import {
   alertRender,
   buttonRender,
 } from './dom';
-import {Message, abort} from '../utils/agent';
+import {type Message, abort} from '../utils/agent';
 
 const handleSend = async (): Promise<void> => {
   const userInput = userInputRender.value;

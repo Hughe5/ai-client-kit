@@ -19,7 +19,7 @@ import {eventManager} from './view/event';
 import {init} from './view/index';
 import {template} from './view/template';
 import {tools} from './store/tools';
-import {Agent, Message} from './utils/agent';
+import {Agent} from './utils/agent';
 
 class Panel extends HTMLElement {
   constructor() {

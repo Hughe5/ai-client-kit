@@ -15,7 +15,7 @@
  */
 
 import {processMessageContent} from '../utils/message-content';
-import {Message} from '../utils/agent';
+import type {Message} from '../utils/agent';
 
 interface Elements {
   root: ShadowRoot;
