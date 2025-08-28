@@ -30,4 +30,6 @@ lerna-debug.log*
 
 # Test coverage
 coverage
-*.lcov 
+*.lcov
+
+work-log.md
