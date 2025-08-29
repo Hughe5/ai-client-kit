@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import {AIChatPanel, Agent} from '../src/index.ts';
-import type {Message} from '../src/utils/agent.ts';
+import {AIChatPanel, Agent, type Message} from '../src/index.ts';
 
 const main = async () => {
   const container = document.getElementById('container');
