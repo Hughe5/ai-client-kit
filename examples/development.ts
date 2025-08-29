@@ -24,12 +24,18 @@ const main = async () => {
     model: 'ernie-4.5-turbo-32k', // 模型 ID
     url: 'http://localhost:8080/api/chat/completions', // 大模型 API 的代理接口
   });
-  panel.pushMessage({role: 'assistant', content: 'hello'});
+  const init = () => {
+    panel.pushMessage({role: 'assistant', content: 'hello'});
+  };
+  init();
   panel.on('send', async (message: Message) => {
     agent.pushMessage(message);
     panel.pushLoadingMessage();
     const res = await agent.invoke();
     panel.pushMessage(res);
+  });
+  panel.on('create', () => {
+    init();
   });
 };
 
