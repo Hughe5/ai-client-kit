@@ -18,8 +18,8 @@ import {messagesContainerRender} from './view/dom';
 import {eventManager} from './view/event';
 import {init} from './view/index';
 import {template} from './view/template';
-import {tools} from './store/tools';
-import {Agent} from './utils/agent';
+export {tools} from './store/tools';
+export {Agent, type Message} from './utils/agent';
 
 class Panel extends HTMLElement {
   constructor() {
@@ -44,7 +44,7 @@ interface Config {
   container: HTMLElement | null;
 }
 
-class AIChatPanel {
+export class AIChatPanel {
   on = eventManager.on.bind(eventManager);
   pushMessage = messagesContainerRender.pushMessage.bind(messagesContainerRender);
   pushMessages = messagesContainerRender.pushMessages.bind(messagesContainerRender);
@@ -58,5 +58,3 @@ class AIChatPanel {
     container.appendChild(element);
   }
 }
-
-export {tools, Agent, AIChatPanel};
