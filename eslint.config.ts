@@ -2,15 +2,17 @@ import js from '@eslint/js';
 import globals from 'globals';
 import {defineConfig} from 'eslint/config';
 import prettierPlugin from 'eslint-plugin-prettier';
+import tseslint from 'typescript-eslint';
 
 export default defineConfig([
+  ...tseslint.configs.recommended,
+
   {
-    files: ['**/*.{js,mjs,cjs}'],
+    files: ['**/*.{js,mjs,cjs,ts,tsx}'],
     languageOptions: {
       globals: globals.browser,
     },
     plugins: {
-      js,
       prettier: prettierPlugin,
     },
     rules: {
