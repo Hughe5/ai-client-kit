@@ -136,8 +136,13 @@ export type Args<T extends Definition> = ParamType<T['function']['parameters']>;
 
 export type Handler<T extends Definition> = (args: Args<T>) => string | Promise<string>;
 
+type Tool<T extends Definition = Definition> = {
+  def: T;
+  handler: Handler<T>;
+};
+
 export class ToolManager {
-  protected tools: Record<string, {def: Definition; handler: Handler<any>}> = Object.create(null);
+  protected tools: Record<string, Tool> = Object.create(null);
 
   protected ajv = new Ajv({
     allErrors: true,
