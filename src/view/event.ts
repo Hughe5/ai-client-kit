@@ -121,7 +121,7 @@ export function bindEvents(): void {
 
 type EventType = 'send' | 'create';
 
-type EventListener = (args?: any) => void | Promise<void>;
+type EventListener = (args?: unknown) => void | Promise<void>;
 
 class EventManager {
   private events: Record<EventType, EventListener[]> = {
@@ -133,7 +133,7 @@ class EventManager {
     this.events[type].push(listener);
   }
 
-  async emit(type: EventType, args?: any) {
+  async emit(type: EventType, args?: unknown) {
     for (const listener of this.events[type]) {
       try {
         await listener(args);
