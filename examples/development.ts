@@ -30,7 +30,6 @@ const main = async () => {
   init();
   panel.on('send', async (message: Message) => {
     agent.pushMessage(message);
-    panel.pushLoadingMessage();
     const res = await agent.invoke();
     panel.pushMessage(res);
   });

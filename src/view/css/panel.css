@@ -61,7 +61,7 @@
   line-height: 1.5;
 }
 .content-container {
-  padding: 0 14px;
+  padding: 14px;
   border-radius: 8px;
   word-wrap: break-word;
   overflow-x: auto;
@@ -103,4 +103,24 @@
   background-color: black;
   border-radius: 50%;
   color: #fff;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.message.loading {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+.loading-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.loading-container svg {
+  animation: spin 1s linear infinite;
 }

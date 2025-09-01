@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {processMessageContent} from '../utils/message-content';
 import type {Message} from '../utils/agent';
 
 interface Elements {
@@ -69,14 +68,14 @@ export const messagesContainerRender = {
       if (!this.copyButton) {
         const template = document.createElement('template');
         template.innerHTML = `
-                    <div class="button-container">
-                        <button class="icon square plain tooltip" type="button" data-action="copy">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 1024 1024"><path d="M298.667 256V128a42.667 42.667 0 0 1 42.666-42.667h512A42.667 42.667 0 0 1 896 128v597.333A42.667 42.667 0 0 1 853.333 768h-128v128c0 23.552-19.2 42.667-42.965 42.667H170.965A42.71 42.71 0 0 1 128 896l.128-597.333c0-23.552 19.2-42.667 42.923-42.667h127.616zm-85.248 85.333-.086 512H640v-512H213.419zM384 256h341.333v426.667h85.334v-512H384V256z"/></svg>
-                            <span class="copied-text">Copied</span>
-                            <span class="tooltip-text">复制</span>
-                        </button>
-                    </div>
-                `;
+          <div class="button-container">
+            <button class="icon square plain tooltip" type="button" data-action="copy">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 1024 1024"><path d="M298.667 256V128a42.667 42.667 0 0 1 42.666-42.667h512A42.667 42.667 0 0 1 896 128v597.333A42.667 42.667 0 0 1 853.333 768h-128v128c0 23.552-19.2 42.667-42.965 42.667H170.965A42.71 42.71 0 0 1 128 896l.128-597.333c0-23.552 19.2-42.667 42.923-42.667h127.616zm-85.248 85.333-.086 512H640v-512H213.419zM384 256h341.333v426.667h85.334v-512H384V256z"/></svg>
+              <span class="copied-text">Copied</span>
+              <span class="tooltip-text">复制</span>
+            </button>
+          </div>
+        `;
         this.copyButton = template;
       }
       return this.copyButton;
@@ -99,23 +98,29 @@ export const messagesContainerRender = {
   },
 
   createMessage(message: Message) {
-    const {role} = message;
+    const {role, content} = message;
     const messageElement = document.createElement('div');
     messageElement.className = `message ${role}`;
     const contentContainer = document.createElement('div');
     contentContainer.className = 'content-container';
-    contentContainer.innerHTML = processMessageContent(message, {
-      showLoading: role === 'assistant' ? message.showLoading : false,
-    });
+    contentContainer.innerText = content;
     messageElement.appendChild(contentContainer);
-    if (role === 'assistant' && message.showLoading === true) {
-      messageElement.classList.add('loading');
-    } else {
-      const button = this.createCopyButton(message);
-      if (button) {
-        messageElement.appendChild(button);
-      }
+    const button = this.createCopyButton(message);
+    if (button) {
+      messageElement.appendChild(button);
     }
+    return messageElement;
+  },
+  
+  createLoadingMessage() {
+    const messageElement = document.createElement('div');
+    messageElement.className = 'message loading';
+    messageElement.innerHTML = `
+      <div class="loading-container">
+        <svg t="1756699255145" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3464" width="18" height="18"><path d="M270.4 214.4C336 160 420 128 512 128c212 0 384 172 384 384h64c0-247.2-200.8-448-448-448-107.2 0-205.6 37.6-282.4 100l40.8 50.4z" p-id="3465"></path></svg>
+        处理中
+      </div>
+    `;
     return messageElement;
   },
 
@@ -125,36 +130,19 @@ export const messagesContainerRender = {
     }
     const {messagesContainer} = getElements();
     const {role} = message;
-    const loadingMessageElement = messagesContainer.querySelector('.message.assistant.loading');
-    if (role === 'assistant' && loadingMessageElement) {
-      const contentContainer = loadingMessageElement.querySelector('.content-container');
-      if (!contentContainer) {
-        return;
-      }
-      contentContainer.innerHTML = processMessageContent(message, {
-        showLoading: message.showLoading,
+    const messageElement = this.createMessage(message);
+    messagesContainer.appendChild(messageElement);
+    /**
+     * 把新加的 user message 滚动到距离顶部 12px 的位置，下面腾出来的空间用来渲染 assistant message
+     * 12px 是两条 message 之间的间距，在 panel.css 里 message 的样式里
+     * 一屏只展示一对 user message 和 assistant message
+     */
+    if (role === 'user') {
+      const MARGIN_BOTTOM = 12;
+      messagesContainer.scrollTo({
+        top: messageElement.offsetTop - MARGIN_BOTTOM,
+        behavior: 'smooth',
       });
-      if (!loadingMessageElement.querySelector('.button-container')) {
-        const button = this.createCopyButton(message);
-        if (button) {
-          loadingMessageElement.appendChild(button);
-        }
-      }
-    } else {
-      const messageElement = this.createMessage(message);
-      messagesContainer.appendChild(messageElement);
-      /**
-       * 把新加的 user message 滚动到距离顶部 12px 的位置，下面腾出来的空间用来渲染 assistant message
-       * 12px 是两条 message 之间的间距，在 panel.css 里 message 的样式里
-       * 一屏只展示一对 user message 和 assistant message
-       */
-      if (role === 'user') {
-        const MARGIN_BOTTOM = 12;
-        messagesContainer.scrollTo({
-          top: messageElement.offsetTop - MARGIN_BOTTOM,
-          behavior: 'smooth',
-        });
-      }
     }
   },
 
@@ -168,7 +156,15 @@ export const messagesContainerRender = {
   },
 
   pushLoadingMessage() {
-    this.pushMessage({role: 'assistant', content: '', showLoading: true});
+    const {messagesContainer} = getElements();
+    const loadingMessageElement = this.createLoadingMessage();
+    messagesContainer.appendChild(loadingMessageElement);
+  },
+
+  removeLoadingMessage() {
+    const {messagesContainer} = getElements();
+    const loadingMessageElement = messagesContainer.querySelector('.message.loading');
+    loadingMessageElement?.remove();
   },
 
   clear(): void {

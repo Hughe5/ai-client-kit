@@ -15,6 +15,7 @@
  */
 
 import Ajv, {ValidateFunction, AnySchema} from 'ajv';
+import {messagesContainerRender} from '../view/dom';
 
 let controller: AbortController | null = null;
 
@@ -237,7 +238,6 @@ interface AssistantMessage<T extends Role> {
   role: T;
   content: string;
   tool_calls?: ToolCall[];
-  showLoading?: boolean;
 }
 
 interface ToolMessage<T extends Role> {
@@ -254,6 +254,7 @@ export type Message =
 interface Params {
   tools?: string[];
   roundsLeft?: number;
+  isRecursion?: boolean;
 }
 
 export class Agent extends ToolManager {
@@ -264,6 +265,7 @@ export class Agent extends ToolManager {
   defaultParams: Params = {
     tools: [],
     roundsLeft: this.maxRounds,
+    isRecursion: false,
   };
 
   constructor(config: Config) {
@@ -299,10 +301,13 @@ export class Agent extends ToolManager {
   }
 
   async invoke(params = this.defaultParams): Promise<AssistantMessage<'assistant'> | undefined> {
-    const {tools = [], roundsLeft = this.maxRounds} = params;
+    const {tools = [], roundsLeft = this.maxRounds, isRecursion = false} = params;
     abort();
     controller = new AbortController();
     try {
+      if (!isRecursion) {
+        messagesContainerRender.pushLoadingMessage();
+      }
       const response = await fetch(this.url, {
         method: 'POST',
         headers: {
@@ -356,7 +361,7 @@ export class Agent extends ToolManager {
 
       // 剩余轮次 > 0 时继续回调
       if (roundsLeft - 1 > 0) {
-        return await this.invoke({tools: [], roundsLeft: roundsLeft - 1});
+        return await this.invoke({tools: [], roundsLeft: roundsLeft - 1, isRecursion: true});
       }
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
@@ -366,6 +371,7 @@ export class Agent extends ToolManager {
       throw error;
     } finally {
       controller = null;
+      messagesContainerRender.removeLoadingMessage();
     }
   }
 }
