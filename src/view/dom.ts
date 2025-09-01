@@ -111,7 +111,7 @@ export const messagesContainerRender = {
     }
     return messageElement;
   },
-  
+
   createLoadingMessage() {
     const messageElement = document.createElement('div');
     messageElement.className = 'message loading';
