@@ -62,9 +62,9 @@ const panel = new AIChatPanel({container});
 
 ### 参数说明
 
-| Parameter   | Type                    | Required | Description |
-| ----------- | ----------------------- | :------: | ----------- |
-| `container` | `HTMLElement \| null`   | Y        | 聊天面板挂载的 DOM 容器 |
+| Parameter   | Type                  | Required | Description             |
+| ----------- | --------------------- | :------: | ----------------------- |
+| `container` | `HTMLElement \| null` |    Y     | 聊天面板挂载的 DOM 容器 |
 
 ### 注意事项
 
