@@ -36,12 +36,13 @@ const main = async () => {
         panel.pushMessage(res);
       }
     } catch (error) {
-      const msg = error instanceof Error 
-        ? error.message 
-        : typeof error === 'string' 
-          ? error 
-          : JSON.stringify(error, null, 2);
-      
+      const msg =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : JSON.stringify(error, null, 2);
+
       console.error('操作失败:', msg);
     }
   });
