@@ -15,7 +15,7 @@
  */
 
 // 只能从 index.ts 引入
-import {AIChatPanel, Agent, type Message} from '../src/index.ts';
+import {AIChatPanel, Agent, type Message} from '../src';
 
 const main = async () => {
   const container = document.getElementById('container');
@@ -29,9 +29,21 @@ const main = async () => {
   };
   init();
   panel.on('send', async (message: Message) => {
-    agent.pushMessage(message);
-    const res = await agent.invoke();
-    panel.pushMessage(res);
+    try {
+      agent.pushMessage(message);
+      const res = await agent.invoke();
+      if (res) {
+        panel.pushMessage(res);
+      }
+    } catch (error) {
+      const msg = error instanceof Error 
+        ? error.message 
+        : typeof error === 'string' 
+          ? error 
+          : JSON.stringify(error, null, 2);
+      
+      console.error('操作失败:', msg);
+    }
   });
   panel.on('create', () => {
     init();
