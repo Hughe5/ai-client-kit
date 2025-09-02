@@ -121,22 +121,37 @@ export function bindEvents(): void {
 
 type EventType = 'send' | 'create';
 
-type EventListener = (args?: unknown) => void | Promise<void>;
+type EventParams = {
+  send: [message: Message];
+  create: []; // 空数组表示无参数
+};
+
+type EventListener<T extends EventType> = (...args: EventParams[T]) => void | Promise<void>;
 
 class EventManager {
-  private events: Record<EventType, EventListener[]> = {
+  private events: {
+    [K in EventType]: EventListener<K>[];
+  } = {
     send: [],
     create: [],
   };
 
-  on(type: EventType, listener: EventListener) {
+  on(type: 'send', listener: EventListener<'send'>): void;
+
+  on(type: 'create', listener: EventListener<'create'>): void;
+
+  on<T extends EventType>(type: T, listener: EventListener<T>): void {
     this.events[type].push(listener);
   }
 
-  async emit(type: EventType, args?: unknown) {
+  emit(type: 'send', message: Message): Promise<void>;
+
+  emit(type: 'create'): Promise<void>;
+
+  async emit<T extends EventType>(type: T, ...args: EventParams[T]): Promise<void> {
     for (const listener of this.events[type]) {
       try {
-        await listener(args);
+        await listener(...args);
       } catch (error) {
         console.error(`Error in event listener for ${type}:`, error);
       }
