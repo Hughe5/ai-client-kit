@@ -124,7 +124,7 @@ export const messagesContainerRender = {
     return messageElement;
   },
 
-  pushMessage(message: Message) {
+  pushMessage(message: Message | undefined) {
     if (!message) {
       return;
     }
