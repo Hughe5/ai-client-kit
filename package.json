@@ -1,6 +1,6 @@
 {
   "name": "ai-client-kit",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "适用于任意前端框架的 AI 集成套件，支持多模型接入、聊天面板、Function Calling 等。",
   "author": {
     "name": "Hughe5",
@@ -28,7 +28,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build && tsc -p tsconfig.json",
+    "build": "vite build && tsc -p tsconfig.build.json",
     "lint": "eslint . --ext .js,.mjs,.cjs,.ts,.tsx --fix",
     "lint:check": "eslint . --ext .js,.mjs,.cjs,.ts,.tsx",
     "format": "prettier . --write",
