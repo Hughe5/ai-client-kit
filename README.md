@@ -70,14 +70,14 @@ const panel = new AIChatPanel({container});
 
 - 在 DOM 准备就绪后实例化 `AIChatPanel`，确保 `container` 元素已存在。
 
-## 内置工具函数
+## 内置的工具函数
 
-### 解析相对时间（tools.parse_relative_date）
+### 解析中文语境的相对时间（tools.parse_relative_date）
 
 **功能说明：**
 
-- 将相对时间转为绝对时间
-- 支持中文相对时间，如"明天"、"后天"、"大后天"、"本周三"、"下周一下午 3 点"等
+- 将中文语境的相对时间转为绝对时间
+- 支持中文语境的相对时间，如"明天"、"后天"、"大后天"、"本周三"、"下周一下午 3 点"等
 - 返回格式化的时间字符串（YYYY-MM-DD HH:mm:ss）
 
 **使用示例：**
