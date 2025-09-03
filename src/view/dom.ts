@@ -37,7 +37,7 @@ const ids: Record<keyof Omit<Elements, 'root'>, string> = {
   createButton: 'create-button',
 };
 
-export function cacheElements(root: ShadowRoot): Elements {
+function cacheElements(root: ShadowRoot): Elements {
   if (elements) return elements;
 
   elements = {} as Elements;
@@ -56,11 +56,11 @@ export function cacheElements(root: ShadowRoot): Elements {
   return elements;
 }
 
-export function getElements(): Elements {
+function getElements(): Elements {
   return elements!;
 }
 
-export const messagesContainerRender = {
+const messagesContainerRender = {
   // 缓存DOM模板，避免重复创建和解析HTML字符串
   _templates: {
     copyButton: null as HTMLTemplateElement | null,
@@ -174,7 +174,7 @@ export const messagesContainerRender = {
 };
 
 // 输入框操作
-export const userInputRender = {
+const userInputRender = {
   get value(): string {
     const elements = getElements();
     return elements.userInput.value.trim();
@@ -202,7 +202,7 @@ export const userInputRender = {
 };
 
 // 按钮状态管理
-export const buttonRender = {
+const buttonRender = {
   // 默认状态：显示发送按钮
   default(): void {
     const {submitIcon, stopIcon} = getElements();
@@ -218,7 +218,7 @@ export const buttonRender = {
   },
 };
 
-export const alertRender = {
+const alertRender = {
   show(text: string): void {
     const {root} = getElements();
     const el = root.querySelector('.alert');
@@ -233,4 +233,13 @@ export const alertRender = {
       element.remove();
     });
   },
+};
+
+export {
+  cacheElements,
+  getElements,
+  messagesContainerRender,
+  userInputRender,
+  buttonRender,
+  alertRender,
 };

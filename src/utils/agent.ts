@@ -19,7 +19,7 @@ import {messagesContainerRender} from '../view/dom';
 
 let controller: AbortController | null = null;
 
-export function abort(): void {
+function abort(): void {
   if (controller) {
     controller.abort();
     controller = null;
@@ -76,7 +76,7 @@ interface ObjectParameter<T extends ParameterType> {
   additionalProperties?: boolean; // 是否允许额外字段
 }
 
-export type Parameters =
+type Parameters =
   | StringParameter<'string'>
   | NumberParameter<'number' | 'integer'>
   | BooleanParameter<'boolean'>
@@ -85,7 +85,7 @@ export type Parameters =
 
 type DefinitionType = 'function';
 
-export interface Definition {
+interface Definition {
   type: DefinitionType;
   function: {
     name: string;
@@ -133,16 +133,16 @@ type RequiredKeys<
   R extends readonly string[] | undefined,
 > = R extends string[] ? RequiredKeysWithRequired<P, R> : RequiredKeysNoRequired<P>;
 
-export type Args<T extends Definition> = ParamType<T['function']['parameters']>;
+type Args<T extends Definition> = ParamType<T['function']['parameters']>;
 
-export type Handler<T extends Definition> = (args: Args<T>) => string | Promise<string>;
+type Handler<T extends Definition> = (args: Args<T>) => string | Promise<string>;
 
 type Tool<T extends Definition = Definition> = {
   def: T;
   handler: Handler<T>;
 };
 
-export class ToolManager {
+class ToolManager {
   protected tools: Record<string, Tool> = Object.create(null);
 
   protected ajv = new Ajv({
@@ -246,7 +246,7 @@ interface ToolMessage<T extends Role> {
   tool_call_id: string;
 }
 
-export type Message =
+type Message =
   | SimpleMessage<'system' | 'user'>
   | AssistantMessage<'assistant'>
   | ToolMessage<'tool'>;
@@ -257,7 +257,7 @@ interface Params {
   isRecursion?: boolean;
 }
 
-export class Agent extends ToolManager {
+class Agent extends ToolManager {
   model = '';
   url = '';
   messages: Message[] = [];
@@ -375,3 +375,14 @@ export class Agent extends ToolManager {
     }
   }
 }
+
+export {
+  abort,
+  type Parameters,
+  type Definition,
+  type Args,
+  type Handler,
+  ToolManager,
+  type Message,
+  Agent,
+};

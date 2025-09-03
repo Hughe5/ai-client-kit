@@ -61,7 +61,7 @@ const handleCreate = async (): Promise<void> => {
 };
 
 // 初始化事件监听器
-export function bindEvents(): void {
+function bindEvents(): void {
   const {submitIcon, createButton, messagesContainer, userInputContainer, userInput, stopIcon} =
     getElements();
 
@@ -159,4 +159,6 @@ class EventManager {
   }
 }
 
-export const eventManager = new EventManager();
+const eventManager = new EventManager();
+
+export {bindEvents, eventManager};
