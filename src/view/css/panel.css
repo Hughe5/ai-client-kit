@@ -65,6 +65,7 @@
   border-radius: 8px;
   word-wrap: break-word;
   overflow-x: auto;
+  color: black;
 }
 .message.user {
   margin-left: auto;
