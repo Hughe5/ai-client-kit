@@ -31,9 +31,14 @@ const main = async () => {
   panel.on('send', async (message: Message) => {
     try {
       agent.pushMessage(message);
-      const res = await agent.invoke();
-      if (res) {
-        panel.pushMessage(res);
+      panel.pushStreamMessage();
+      const generator = agent.invoke();
+      let markdown = '';
+      for await (const chunk of generator) {
+        if (chunk.choices[0].delta.content) {
+          markdown += chunk.choices[0].delta.content;
+          panel.updateStreamMessageContent(markdown);
+        }
       }
     } catch (error) {
       const msg =
