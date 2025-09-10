@@ -15,6 +15,7 @@
  */
 
 import type {Message} from '../utils/agent';
+import {micromark} from 'micromark';
 
 interface Elements {
   root: ShadowRoot;
@@ -98,12 +99,9 @@ const messagesContainerRender = {
   },
 
   createMessage(message: Message) {
-    const {role, content} = message;
     const messageElement = document.createElement('div');
-    messageElement.className = `message ${role}`;
     const contentContainer = document.createElement('div');
     contentContainer.className = 'content-container';
-    contentContainer.innerText = content;
     messageElement.appendChild(contentContainer);
     const button = this.createCopyButton(message);
     if (button) {
@@ -112,16 +110,11 @@ const messagesContainerRender = {
     return messageElement;
   },
 
-  createLoadingMessage() {
-    const messageElement = document.createElement('div');
-    messageElement.className = 'message loading';
-    messageElement.innerHTML = `
-      <div class="loading-container">
-        <svg t="1756699255145" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3464" width="18" height="18"><path d="M270.4 214.4C336 160 420 128 512 128c212 0 384 172 384 384h64c0-247.2-200.8-448-448-448-107.2 0-205.6 37.6-282.4 100l40.8 50.4z" p-id="3465"></path></svg>
-        处理中
-      </div>
-    `;
-    return messageElement;
+  updateMessageContent(messageElement: Element, content: string, markdown: boolean) {
+    const contentContainer = messageElement.querySelector('.content-container');
+    if (contentContainer) {
+      contentContainer.innerHTML = markdown ? micromark(content) : content;
+    }
   },
 
   pushMessage(message: Message | undefined) {
@@ -129,8 +122,10 @@ const messagesContainerRender = {
       return;
     }
     const {messagesContainer} = getElements();
-    const {role} = message;
+    const {role, content} = message;
     const messageElement = this.createMessage(message);
+    messageElement.className = `message ${role}`;
+    this.updateMessageContent(messageElement, content, true);
     messagesContainer.appendChild(messageElement);
     /**
      * 把新加的 user message 滚动到距离顶部 12px 的位置，下面腾出来的空间用来渲染 assistant message
@@ -155,16 +150,30 @@ const messagesContainerRender = {
     }
   },
 
-  pushLoadingMessage() {
+  pushStreamMessage() {
     const {messagesContainer} = getElements();
-    const loadingMessageElement = this.createLoadingMessage();
-    messagesContainer.appendChild(loadingMessageElement);
+    const messageElement = this.createMessage({role: 'assistant', content: ''});
+    messageElement.className = 'message assistant stream';
+    this.updateMessageContent(messageElement, '<p class="loading-dots"></p>', false);
+    messagesContainer.appendChild(messageElement);
   },
 
-  removeLoadingMessage() {
+  finishStreamMessage() {
     const {messagesContainer} = getElements();
-    const loadingMessageElement = messagesContainer.querySelector('.message.loading');
-    loadingMessageElement?.remove();
+    const messageElement = messagesContainer.querySelector('.message.assistant.stream');
+    if (!messageElement) {
+      return;
+    }
+    messageElement.classList.remove('stream');
+  },
+
+  updateStreamMessageContent(content: string) {
+    const {messagesContainer} = getElements();
+    const messageElement = messagesContainer.querySelector('.message.assistant.stream');
+    if (!messageElement) {
+      return;
+    }
+    this.updateMessageContent(messageElement, content, true);
   },
 
   clear(): void {
