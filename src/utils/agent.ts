@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import Ajv, {ValidateFunction, AnySchema} from 'ajv';
+import Ajv, {type ValidateFunction, type AnySchema} from 'ajv';
+import _ from 'lodash';
 import {messagesContainerRender} from '../view/dom';
 
 let controller: AbortController | null = null;
@@ -254,7 +255,12 @@ type Message =
 interface Params {
   tools?: string[];
   roundsLeft?: number;
-  isRecursion?: boolean;
+}
+
+interface Chunk {
+  choices: Array<{
+    delta: AssistantMessage<'assistant'>;
+  }>;
 }
 
 class Agent extends ToolManager {
@@ -265,7 +271,6 @@ class Agent extends ToolManager {
   defaultParams: Params = {
     tools: [],
     roundsLeft: this.maxRounds,
-    isRecursion: false,
   };
 
   constructor(config: Config) {
@@ -300,14 +305,41 @@ class Agent extends ToolManager {
     }
   }
 
-  async invoke(params = this.defaultParams): Promise<AssistantMessage<'assistant'> | undefined> {
-    const {tools = [], roundsLeft = this.maxRounds, isRecursion = false} = params;
+  merge<T extends object, S extends object>(
+    target: T | null,
+    source: S,
+    fieldsToConcat: (keyof (T & S))[] = [],
+  ): T & S {
+    return _.mergeWith(
+      {}, // 避免直接修改原对象
+      target,
+      source,
+      (objValue: unknown, srcValue: unknown, key: keyof (T & S)) => {
+        // 检查当前键是否需要拼接且都是字符串类型
+        if (
+          fieldsToConcat.includes(key) &&
+          typeof objValue === 'string' &&
+          typeof srcValue === 'string'
+        ) {
+          return objValue + srcValue;
+        }
+        // 对于数组可以在这里添加特殊处理逻辑（如果需要）
+        // if (Array.isArray(objValue) && Array.isArray(srcValue)) {
+        //   return [...objValue, ...srcValue];
+        // }
+        // 其他情况使用默认合并行为
+        return undefined;
+      },
+    );
+  }
+
+  async *invoke(
+    params = this.defaultParams,
+  ): AsyncGenerator<Chunk, AssistantMessage<'assistant'> | undefined, void> {
+    const {tools = [], roundsLeft = this.maxRounds} = params;
     abort();
     controller = new AbortController();
     try {
-      if (!isRecursion) {
-        messagesContainerRender.pushLoadingMessage();
-      }
       const response = await fetch(this.url, {
         method: 'POST',
         headers: {
@@ -317,6 +349,7 @@ class Agent extends ToolManager {
           model: this.model,
           messages: this.messages,
           tools: this.getDefinitions(tools),
+          stream: true,
         }),
         signal: controller.signal,
       });
@@ -325,9 +358,37 @@ class Agent extends ToolManager {
         throw new DOMException('请求已被取消', 'AbortError');
       }
 
-      const result = await response.json();
+      const reader = response.body?.getReader();
 
-      const message = result?.choices?.[0]?.message as AssistantMessage<'assistant'> | undefined;
+      if (!reader) {
+        throw new Error('Failed to get response reader');
+      }
+
+      let result: Chunk | null = null;
+
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const {done, value} = await reader.read();
+        if (done) {
+          break;
+        }
+        const chunk = decoder.decode(value, {stream: true});
+        const arr = chunk.split('\n\n').filter((item) => item.trim() !== '');
+        for (const item of arr) {
+          if (item === 'data: [DONE]') {
+            break;
+          }
+          const jsonStr = item.replace(/^data: /, '');
+          const json = JSON.parse(jsonStr);
+          result = this.merge(result, json, ['content']);
+          yield json;
+        }
+      }
+
+      messagesContainerRender.finishStreamMessage();
+
+      const message = result?.choices?.[0]?.delta;
 
       if (!message) {
         return;
@@ -361,7 +422,7 @@ class Agent extends ToolManager {
 
       // 剩余轮次 > 0 时继续回调
       if (roundsLeft - 1 > 0) {
-        return await this.invoke({tools: [], roundsLeft: roundsLeft - 1, isRecursion: true});
+        this.invoke({tools: [], roundsLeft: roundsLeft - 1});
       }
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
@@ -371,7 +432,6 @@ class Agent extends ToolManager {
       throw error;
     } finally {
       controller = null;
-      messagesContainerRender.removeLoadingMessage();
     }
   }
 }
