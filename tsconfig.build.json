@@ -1,5 +1,10 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,                                 /* Generate .d.ts files from TypeScript and JavaScript files in your project. */
+    "emitDeclarationOnly": true,                         /* Only output d.ts files and not JavaScript files. */
+    "outDir": "./dist",                                  /* Specify an output folder for all emitted files. */
+  },
   "include": ["src", "vite-env.d.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "exclude": ["**/*.test.ts"]
 }
