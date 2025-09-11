@@ -18,7 +18,7 @@ import {messagesContainerRender} from './view/dom';
 import {eventManager} from './view/event';
 import {init} from './view/index';
 import {template} from './view/template';
-export {tools} from './store/tools';
+export {tools} from './utils/tools';
 export {Agent, type Message} from './utils/agent';
 
 class Panel extends HTMLElement {

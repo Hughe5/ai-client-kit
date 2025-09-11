@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import type {Definition} from '../utils/agent';
-import {parseRelativeDate} from '../utils/time';
+import type {Definition} from './agent';
+import {parseRelativeDate} from './time';
 
 export const tools = {
   parse_relative_date: {
