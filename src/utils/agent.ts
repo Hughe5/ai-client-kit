@@ -27,10 +27,8 @@ function abort(): void {
   }
 }
 
-type ParameterType = 'string' | 'number' | 'integer' | 'boolean' | 'array' | 'object';
-
-interface StringParameter<T extends ParameterType> {
-  type: T;
+interface StringParameter {
+  type: 'string';
   description?: string;
   enum?: string[];
   pattern?: string;
@@ -40,8 +38,8 @@ interface StringParameter<T extends ParameterType> {
   maxLength?: number;
 }
 
-interface NumberParameter<T extends ParameterType> {
-  type: T;
+interface NumberParameter {
+  type: 'number' | 'integer';
   description?: string;
   enum?: number[];
   minimum?: number;
@@ -52,14 +50,14 @@ interface NumberParameter<T extends ParameterType> {
   multipleOf?: number;
 }
 
-interface BooleanParameter<T extends ParameterType> {
-  type: T;
+interface BooleanParameter {
+  type: 'boolean';
   description?: string;
   default?: boolean;
 }
 
-interface ArrayParameter<T extends ParameterType> {
-  type: T;
+interface ArrayParameter {
+  type: 'array';
   description?: string;
   items: Parameters;
   minItems?: number;
@@ -68,8 +66,8 @@ interface ArrayParameter<T extends ParameterType> {
   default?: unknown[];
 }
 
-interface ObjectParameter<T extends ParameterType> {
-  type: T;
+interface ObjectParameter {
+  type: 'object';
   description?: string;
   properties: Record<string, Parameters>;
   required?: string[];
@@ -78,11 +76,11 @@ interface ObjectParameter<T extends ParameterType> {
 }
 
 type Parameters =
-  | StringParameter<'string'>
-  | NumberParameter<'number' | 'integer'>
-  | BooleanParameter<'boolean'>
-  | ArrayParameter<'array'>
-  | ObjectParameter<'object'>;
+  | StringParameter
+  | NumberParameter
+  | BooleanParameter
+  | ArrayParameter
+  | ObjectParameter;
 
 type DefinitionType = 'function';
 
@@ -228,29 +226,24 @@ type ToolCall = {
   };
 };
 
-type Role = 'system' | 'user' | 'assistant' | 'tool';
-
-interface SimpleMessage<T extends Role> {
-  role: T;
+interface SimpleMessage {
+  role: 'system' | 'user';
   content: string;
 }
 
-interface AssistantMessage<T extends Role> {
-  role: T;
+interface AssistantMessage {
+  role: 'assistant';
   content: string;
   tool_calls?: ToolCall[];
 }
 
-interface ToolMessage<T extends Role> {
-  role: T;
+interface ToolMessage {
+  role: 'tool';
   content: string;
   tool_call_id: string;
 }
 
-type Message =
-  | SimpleMessage<'system' | 'user'>
-  | AssistantMessage<'assistant'>
-  | ToolMessage<'tool'>;
+type Message = SimpleMessage | AssistantMessage | ToolMessage;
 
 interface Params {
   tools?: string[];
@@ -259,7 +252,7 @@ interface Params {
 
 interface Chunk {
   choices: Array<{
-    delta: AssistantMessage<'assistant'>;
+    delta: AssistantMessage;
   }>;
 }
 
@@ -335,7 +328,7 @@ class Agent extends ToolManager {
 
   async *invoke(
     params = this.defaultParams,
-  ): AsyncGenerator<Chunk, AssistantMessage<'assistant'> | undefined, void> {
+  ): AsyncGenerator<Chunk, AssistantMessage | undefined, void> {
     const {tools = [], roundsLeft = this.maxRounds} = params;
     abort();
     controller = new AbortController();
