@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {cacheElements} from './dom';
+import {cacheElements, messagesContainerRender} from './dom';
 import {bindEvents} from './event';
 
 export const init = (root: ShadowRoot): void => {
@@ -23,4 +23,7 @@ export const init = (root: ShadowRoot): void => {
 
   // 初始化事件监听器
   bindEvents();
+
+  // 设置 messagesContainer paddingBottom
+  messagesContainerRender.setPaddingBottom();
 };

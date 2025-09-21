@@ -52,7 +52,9 @@
 }
 .messages-container {
   flex: 1;
-  padding: 12px 12px calc(100% - 79px);
+  padding-top: 12px;
+  padding-left: 12px;
+  padding-right: 12px;
   overflow-x: hidden;
   overflow-y: auto;
 }

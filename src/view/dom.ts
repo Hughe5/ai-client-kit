@@ -180,6 +180,18 @@ const messagesContainerRender = {
     const elements = getElements();
     elements.messagesContainer.innerHTML = '';
   },
+
+  setPaddingBottom() {
+    const {root, messagesContainer} = getElements();
+    const container = root.querySelector('.app-container');
+    if (!container) {
+      return;
+    }
+    const MESSAGE_HEIGHT = 79; // message 的高度
+    const BOTTOM_CONTAINER_HEIGHT = 142; // .bottom-container 区域的高度
+    const MARGIN = 12; // .bottom-container 区域的 margin
+    messagesContainer.style.paddingBottom = `${container.clientHeight - MESSAGE_HEIGHT - BOTTOM_CONTAINER_HEIGHT - MARGIN * 2}px`;
+  },
 };
 
 // 输入框操作
