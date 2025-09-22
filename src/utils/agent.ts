@@ -361,6 +361,8 @@ class Agent extends ToolManager {
 
       const decoder = new TextDecoder();
 
+      let buffer = '';
+
       while (true) {
         const {done, value} = await reader.read();
         if (done) {
@@ -372,10 +374,17 @@ class Agent extends ToolManager {
           if (item === 'data: [DONE]') {
             break;
           }
-          const jsonStr = item.replace(/^data: /, '');
-          const json = JSON.parse(jsonStr);
-          result = this.merge(result, json, ['content']);
-          yield json;
+          let jsonStr = item.trim().replace(/^data: /, '');
+          jsonStr = buffer + jsonStr;
+          try {
+            const json = JSON.parse(jsonStr);
+            result = this.merge(result, json, ['content']);
+            yield json;
+            buffer = '';
+          } catch (error) {
+            console.log('JSON 解析失败，等待下一个数据块继续拼接', {error, jsonStr});
+            buffer += jsonStr;
+          }
         }
       }
 
