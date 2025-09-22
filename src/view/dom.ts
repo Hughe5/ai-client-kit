@@ -110,10 +110,21 @@ const messagesContainerRender = {
     return messageElement;
   },
 
-  updateMessageContent(messageElement: Element, content: string, markdown: boolean) {
+  loading: '<p class="loading-dots"></p>',
+
+  updateMessageContent(
+    messageElement: Element,
+    content: string,
+    markdown: boolean,
+    loading = false,
+  ) {
     const contentContainer = messageElement.querySelector('.content-container');
     if (contentContainer) {
-      contentContainer.innerHTML = markdown ? micromark(content) : content;
+      contentContainer.innerHTML = markdown
+        ? loading
+          ? micromark(content) + this.loading
+          : micromark(content)
+        : content;
     }
   },
 
@@ -154,7 +165,7 @@ const messagesContainerRender = {
     const {messagesContainer} = getElements();
     const messageElement = this.createMessage({role: 'assistant', content: ''});
     messageElement.className = 'message assistant stream';
-    this.updateMessageContent(messageElement, '<p class="loading-dots"></p>', false);
+    this.updateMessageContent(messageElement, this.loading, false);
     messagesContainer.appendChild(messageElement);
   },
 
@@ -165,6 +176,10 @@ const messagesContainerRender = {
       return;
     }
     messageElement.classList.remove('stream');
+    const loadingElement = messageElement.querySelector('.loading-dots');
+    if (loadingElement) {
+      loadingElement.remove();
+    }
   },
 
   updateStreamMessageContent(content: string) {
@@ -173,7 +188,7 @@ const messagesContainerRender = {
     if (!messageElement) {
       return;
     }
-    this.updateMessageContent(messageElement, content, true);
+    this.updateMessageContent(messageElement, content, true, true);
   },
 
   clear(): void {
