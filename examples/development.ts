@@ -35,7 +35,7 @@ const main = async () => {
       const generator = agent.invoke();
       let markdown = '';
       for await (const chunk of generator) {
-        if (chunk.choices[0].delta.content) {
+        if (chunk.choices[0]?.delta.content) {
           markdown += chunk.choices[0].delta.content;
           panel.updateStreamMessageContent(markdown);
         }
