@@ -31,9 +31,9 @@ interface Elements {
 const parseMarkdown = (content: string) => {
   return micromark(content, {
     extensions: [gfm()],
-    htmlExtensions: [gfmHtml()]
+    htmlExtensions: [gfmHtml()],
   });
-}
+};
 
 let elements: Elements | null = null;
 
