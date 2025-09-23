@@ -16,6 +16,7 @@
 
 import type {Message} from '../utils/agent';
 import {micromark} from 'micromark';
+import {gfmHtml, gfm} from 'micromark-extension-gfm';
 
 interface Elements {
   root: ShadowRoot;
@@ -25,6 +26,13 @@ interface Elements {
   stopIcon: HTMLButtonElement;
   messagesContainer: HTMLElement;
   createButton: HTMLButtonElement;
+}
+
+const parseMarkdown = (content: string) => {
+  return micromark(content, {
+    extensions: [gfm()],
+    htmlExtensions: [gfmHtml()]
+  });
 }
 
 let elements: Elements | null = null;
@@ -122,8 +130,8 @@ const messagesContainerRender = {
     if (contentContainer) {
       contentContainer.innerHTML = markdown
         ? loading
-          ? micromark(content) + this.loading
-          : micromark(content)
+          ? parseMarkdown(content) + this.loading
+          : parseMarkdown(content)
         : content;
     }
   },
