@@ -128,11 +128,13 @@ const messagesContainerRender = {
   ) {
     const contentContainer = messageElement.querySelector('.content-container');
     if (contentContainer) {
-      contentContainer.innerHTML = markdown
-        ? loading
-          ? parseMarkdown(content) + this.loading
-          : parseMarkdown(content)
-        : content;
+      requestAnimationFrame(() => {
+        contentContainer.innerHTML = markdown
+          ? loading
+            ? parseMarkdown(content) + this.loading
+            : parseMarkdown(content)
+          : content;
+      });
     }
   },
 
