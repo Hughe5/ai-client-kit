@@ -206,7 +206,15 @@ const messagesContainerRender = {
     elements.messagesContainer.innerHTML = '';
   },
 
+  height: 0,
+  animationId: null as number | null,
+  observer: null as ResizeObserver | null,
+
   setPaddingBottom() {
+    if (this.observer) {
+      this.observer.disconnect();
+      this.observer = null;
+    }
     const {root, messagesContainer} = getElements();
     const container = root.querySelector('.app-container');
     if (!container) {
@@ -214,8 +222,24 @@ const messagesContainerRender = {
     }
     const MESSAGE_HEIGHT = 79; // message 的高度
     const BOTTOM_CONTAINER_HEIGHT = 142; // .bottom-container 区域的高度
-    const MARGIN = 12; // .bottom-container 区域的 margin
-    messagesContainer.style.paddingBottom = `${container.clientHeight - MESSAGE_HEIGHT - BOTTOM_CONTAINER_HEIGHT - MARGIN * 2}px`;
+    const BOTTOM_CONTAINER_MARGIN = 12; // .bottom-container 区域的 margin
+    this.observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const {height} = entry.contentRect;
+        if (height === this.height) {
+          continue;
+        }
+        this.height = height;
+        if (this.animationId !== null) {
+          cancelAnimationFrame(this.animationId);
+        }
+        this.animationId = requestAnimationFrame(() => {
+          messagesContainer.style.paddingBottom = `${height - MESSAGE_HEIGHT - BOTTOM_CONTAINER_HEIGHT - BOTTOM_CONTAINER_MARGIN * 2}px`;
+          this.animationId = null;
+        });
+      }
+    });
+    this.observer.observe(container);
   },
 };
 
