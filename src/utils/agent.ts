@@ -374,10 +374,9 @@ class Agent extends ToolManager {
           if (item === 'data: [DONE]') {
             break;
           }
-          let jsonStr = item.trim().replace(/^data: /, '');
-          jsonStr = buffer + jsonStr;
+          const jsonStr = item.trim().replace(/^data: /, '');
           try {
-            const json = JSON.parse(jsonStr);
+            const json = JSON.parse(buffer + jsonStr);
             result = this.merge(result, json, ['content']);
             yield json;
             buffer = '';
