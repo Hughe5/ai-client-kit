@@ -220,9 +220,9 @@ const messagesContainerRender = {
     if (!container) {
       return;
     }
-    const MESSAGE_HEIGHT = 79; // message 的高度
-    const BOTTOM_CONTAINER_HEIGHT = 142; // .bottom-container 区域的高度
-    const BOTTOM_CONTAINER_MARGIN = 12; // .bottom-container 区域的 margin
+    const MESSAGES_CONTAINER_PADDING_TOP = 12; // .messages-container 元素的 padding-top
+    const BOTTOM_CONTAINER_CONTENT_HEIGHT = 142; // .bottom-container 元素的内容高度
+    const BOTTOM_CONTAINER_MARGIN = 12; // .bottom-container 元素的 margin
     this.observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const {height} = entry.contentRect;
@@ -234,7 +234,7 @@ const messagesContainerRender = {
           cancelAnimationFrame(this.animationId);
         }
         this.animationId = requestAnimationFrame(() => {
-          messagesContainer.style.paddingBottom = `${height - MESSAGE_HEIGHT - BOTTOM_CONTAINER_HEIGHT - BOTTOM_CONTAINER_MARGIN * 2}px`;
+          messagesContainer.style.paddingBottom = `${height - MESSAGES_CONTAINER_PADDING_TOP - BOTTOM_CONTAINER_CONTENT_HEIGHT - BOTTOM_CONTAINER_MARGIN * 2}px`;
           this.animationId = null;
         });
       }
