@@ -309,12 +309,10 @@ class Agent extends ToolManager {
       source,
       (objValue: unknown, srcValue: unknown, key: keyof (T & S)) => {
         // 检查当前键是否需要拼接且都是字符串类型
-        if (
-          fieldsToConcat.includes(key) &&
-          typeof objValue === 'string' &&
-          typeof srcValue === 'string'
-        ) {
-          return objValue + srcValue;
+        if (fieldsToConcat.includes(key)) {
+          const objStr = typeof objValue === 'string' ? objValue : '';
+          const srcStr = typeof srcValue === 'string' ? srcValue : '';
+          return objStr + srcStr;
         }
         // 对于数组可以在这里添加特殊处理逻辑（如果需要）
         // if (Array.isArray(objValue) && Array.isArray(srcValue)) {
@@ -393,6 +391,13 @@ class Agent extends ToolManager {
 
       if (!message) {
         return;
+      }
+
+      /**
+       * 兼容有的模型返回的 role 是 null
+       */
+      if (message.role === null) {
+        message.role = 'assistant';
       }
 
       const {content, role, tool_calls} = message;
