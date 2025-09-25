@@ -34,9 +34,16 @@ const main = async () => {
       panel.pushStreamMessage();
       const generator = agent.invoke();
       let markdown = '';
-      for await (const chunk of generator) {
-        if (chunk.choices[0]?.delta.content) {
-          markdown += chunk.choices[0].delta.content;
+      while (true) {
+        const {value, done} = await generator.next();
+        if (done) {
+          if (value) {
+            agent.pushMessage(value);
+          }
+          break;
+        }
+        if (value.choices[0]?.delta.content) {
+          markdown += value.choices[0].delta.content;
           panel.updateStreamMessageContent(markdown);
         }
       }
