@@ -109,3 +109,17 @@
   border-radius: 50%;
   color: #fff;
 }
+
+.message.assistant .content-container table {
+  border-collapse: collapse;
+}
+
+.message.assistant .content-container th,
+.message.assistant .content-container td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.message.assistant .content-container th {
+  background-color: #e0e0e0;
+}
