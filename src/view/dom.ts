@@ -181,15 +181,20 @@ const messagesContainerRender = {
 
   finishStreamMessage() {
     const {messagesContainer} = getElements();
-    const messageElement = messagesContainer.querySelector('.message.assistant.stream');
-    if (!messageElement) {
-      return;
-    }
-    messageElement.classList.remove('stream');
-    const loadingElement = messageElement.querySelector('.loading-dots');
-    if (loadingElement) {
-      loadingElement.remove();
-    }
+    /**
+     * 这里必须使用 requestAnimationFrame
+     * 因为 updateMessageContent 里已经使用了 requestAnimationFrame
+     * 确保 finishStreamMessage 在最后一次的 updateMessageContent 执行之后再执行
+     */
+    requestAnimationFrame(() => {
+      const messageElement = messagesContainer.querySelector('.message.assistant.stream');
+      if (!messageElement) {
+        return;
+      }
+      messageElement.classList.remove('stream');
+      const loadingElement = messageElement.querySelector('.loading-dots');
+      loadingElement?.remove();
+    });
   },
 
   updateStreamMessageContent(content: string) {
