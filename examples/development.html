@@ -25,10 +25,18 @@
       rel="icon"
       type="image/x-icon"
     />
+    <style>
+      body {
+        margin: 0;
+      }
+      #container {
+        height: 100vh;
+      }
+    </style>
   </head>
   <body>
-    <!-- AI 聊天面板的容器 -->
-    <div id="container" style="width: 430px; height: 620px; border: 1px solid #ccc"></div>
+    <!-- AI 聊天面板的容器，需要设置宽高 -->
+    <div id="container"></div>
     <script type="module" src="./development.ts"></script>
   </body>
 </html>
