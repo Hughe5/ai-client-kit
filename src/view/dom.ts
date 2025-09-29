@@ -29,10 +29,13 @@ interface Elements {
 }
 
 const parseMarkdown = (content: string) => {
-  return micromark(content, {
+  const html = micromark(content, {
     extensions: [gfm()],
     htmlExtensions: [gfmHtml()],
   });
+
+  // 不转义 br 标签，保留换行
+  return html.replace(/&lt;br\/?&gt;/gi, '<br>');
 };
 
 let elements: Elements | null = null;
