@@ -21,7 +21,7 @@ const main = async () => {
   const container = document.getElementById('container');
   const panel = new AIChatPanel({container});
   const agent = new Agent({
-    model: 'ernie-4.5-turbo-32k', // 模型 ID
+    model: 'zai-org/GLM-4.5-FP8', // 模型 ID
     url: 'http://localhost:8080/api/chat/completions', // 大模型 API 的代理接口
   });
   const init = () => {
