@@ -15,8 +15,125 @@
  */
 
 import type {Message} from '../utils/agent';
-import {micromark} from 'micromark';
-import {gfmHtml, gfm} from 'micromark-extension-gfm';
+import {unified} from 'unified';
+import remarkParse from 'remark-parse';
+import remarkGfm from 'remark-gfm';
+import remarkRehype from 'remark-rehype';
+import rehypeStringify from 'rehype-stringify';
+import {visit} from 'unist-util-visit';
+import type {Root, Code, InlineCode} from 'mdast';
+import type {Plugin} from 'prettier';
+import * as prettier from 'prettier/standalone';
+import parserBabel from 'prettier/plugins/babel';
+import parserEstree from 'prettier/plugins/estree'; // 必须和 parserBabel 配合
+import parserHtml from 'prettier/plugins/html';
+import parserPostcss from 'prettier/plugins/postcss';
+import parserMarkdown from 'prettier/plugins/markdown';
+import DOMPurify from 'dompurify';
+
+// 语言对应 parser + 插件
+const parserMap = new Map<string, {parser: string; plugins?: Plugin[]}>([
+  ['javascript', {parser: 'babel', plugins: [parserBabel, parserEstree]}],
+  ['js', {parser: 'babel', plugins: [parserBabel, parserEstree]}],
+  ['typescript', {parser: 'babel-ts', plugins: [parserBabel, parserEstree]}],
+  ['ts', {parser: 'babel-ts', plugins: [parserBabel, parserEstree]}],
+  ['html', {parser: 'html', plugins: [parserHtml]}],
+  ['css', {parser: 'css', plugins: [parserPostcss]}],
+  ['scss', {parser: 'css', plugins: [parserPostcss]}],
+  ['markdown', {parser: 'markdown', plugins: [parserMarkdown]}],
+  ['json', {parser: 'json'}],
+]);
+
+function remarkPrettier() {
+  return async (tree: Root) => {
+    const promises: Promise<void>[] = [];
+
+    //  fenced code
+    visit(tree, 'code', (node: Code) => {
+      const lang = node.lang;
+      if (!lang) {
+        return;
+      }
+      const config = parserMap.get(lang);
+      if (!config) {
+        return;
+      }
+      const {parser, plugins} = config;
+
+      promises.push(
+        prettier
+          .format(node.value, {
+            parser,
+            plugins,
+          })
+          .then((formatted) => {
+            node.value = formatted;
+          })
+          .catch((e) => {
+            console.warn(`Prettier 格式化失败 [${lang}]:`, e);
+          }),
+      );
+    });
+
+    /**
+     * 格式化下面这样的代码
+     * <td><code>js&lt;br&gt;const [file] = await window.showOpenFilePicker();&lt;br&gt;const data = await file.getFile().then(f =&gt; f.text());&lt;br&gt;</code></td>
+     */
+    visit(tree, 'inlineCode', (node: InlineCode, index, parent) => {
+      const parts = node.value.split(/<br\s*\/?>/i);
+      const lang = parts.shift();
+
+      if (!lang) {
+        return;
+      }
+      const config = parserMap.get(lang);
+
+      if (!config) {
+        return;
+      }
+      const {parser, plugins} = config;
+      const code = parts.join('\n');
+
+      promises.push(
+        prettier
+          .format(code, {
+            parser,
+            plugins,
+          })
+          .then((formatted) => {
+            if (!parent || index === undefined) {
+              return;
+            }
+            parent.children[index] = {
+              type: 'code',
+              lang,
+              value: formatted,
+            };
+          })
+          .catch((e) => {
+            console.warn(`Prettier 格式化失败 [${lang}]:`, e);
+          }),
+      );
+    });
+
+    await Promise.all(promises);
+  };
+}
+
+// Markdown -> HTML
+async function parseMarkdown(markdown: string): Promise<string> {
+  const file = await unified()
+    .use(remarkParse) // Markdown -> AST
+    .use(remarkGfm) // 支持 GFM 特性
+    .use(remarkPrettier) // 格式化 code
+    .use(remarkRehype, {allowDangerousHtml: true}) // Markdown AST -> HTML AST
+    .use(rehypeStringify, {allowDangerousHtml: true}) // HTML AST -> HTML string
+    .process(markdown);
+
+  const dirty = String(file);
+
+  return DOMPurify.sanitize(dirty);
+}
 
 interface Elements {
   root: ShadowRoot;
@@ -27,16 +144,6 @@ interface Elements {
   messagesContainer: HTMLElement;
   createButton: HTMLButtonElement;
 }
-
-const parseMarkdown = (content: string) => {
-  const html = micromark(content, {
-    extensions: [gfm()],
-    htmlExtensions: [gfmHtml()],
-  });
-
-  // 不转义 br 标签，保留换行
-  return html.replace(/&lt;br\/?&gt;/gi, '<br>');
-};
 
 let elements: Elements | null = null;
 
@@ -130,15 +237,17 @@ const messagesContainerRender = {
     loading = false,
   ) {
     const contentContainer = messageElement.querySelector('.content-container');
-    if (contentContainer) {
-      requestAnimationFrame(() => {
-        contentContainer.innerHTML = markdown
-          ? loading
-            ? parseMarkdown(content) + this.loading
-            : parseMarkdown(content)
-          : content;
-      });
+    if (!contentContainer) {
+      return;
     }
+    requestAnimationFrame(async () => {
+      if (markdown) {
+        const parsed = await parseMarkdown(content);
+        contentContainer.innerHTML = loading ? `${parsed}${this.loading}` : parsed;
+      } else {
+        contentContainer.innerHTML = content;
+      }
+    });
   },
 
   pushMessage(message: Message | undefined) {
