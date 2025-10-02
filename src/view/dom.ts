@@ -82,12 +82,10 @@ function remarkPrettier() {
     visit(tree, 'inlineCode', (node: InlineCode, index, parent) => {
       const parts = node.value.split(/<br\s*\/?>/i);
       const lang = parts.shift();
-
       if (!lang) {
         return;
       }
       const config = parserMap.get(lang);
-
       if (!config) {
         return;
       }
