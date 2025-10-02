@@ -80,6 +80,9 @@ function remarkPrettier() {
      * <td><code>js&lt;br&gt;const [file] = await window.showOpenFilePicker();&lt;br&gt;const data = await file.getFile().then(f =&gt; f.text());&lt;br&gt;</code></td>
      */
     visit(tree, 'inlineCode', (node: InlineCode, index, parent) => {
+      if (index === undefined || !parent) {
+        return;
+      }
       const parts = node.value.split(/<br\s*\/?>/i);
       const lang = parts.shift();
       if (!lang) {
@@ -99,9 +102,6 @@ function remarkPrettier() {
             plugins,
           })
           .then((formatted) => {
-            if (!parent || index === undefined) {
-              return;
-            }
             parent.children[index] = {
               type: 'code',
               lang,
