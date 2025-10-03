@@ -35,7 +35,8 @@
     "format:check": "prettier . --check",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "check-license": "addlicense -check -c \"Hughe5\" -l apache \"examples\" \"src\""
   },
   "keywords": [
     "ai",
