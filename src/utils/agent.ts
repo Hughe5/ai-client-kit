@@ -15,7 +15,7 @@
  */
 
 import Ajv, {type ValidateFunction, type AnySchema} from 'ajv';
-import _ from 'lodash';
+import {mergeWith} from 'lodash-es';
 import {messagesContainerRender} from '../view/dom';
 
 let controller: AbortController | null = null;
@@ -303,7 +303,7 @@ class Agent extends ToolManager {
     source: S,
     fieldsToConcat: (keyof (T & S))[] = [],
   ): T & S {
-    return _.mergeWith(
+    return mergeWith(
       {}, // 避免直接修改原对象
       target,
       source,
