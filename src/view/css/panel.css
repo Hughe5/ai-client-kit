@@ -112,6 +112,8 @@
 
 .message.assistant .content-container table {
   border-collapse: collapse;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
 }
 
 .message.assistant .content-container th,
