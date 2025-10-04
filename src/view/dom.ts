@@ -216,9 +216,12 @@ const messagesContainerRender = {
 
   createMessage(message: Message) {
     const messageElement = document.createElement('div');
+    const bodyContainer = document.createElement('div');
+    bodyContainer.className = 'body-container';
+    messageElement.appendChild(bodyContainer);
     const contentContainer = document.createElement('div');
     contentContainer.className = 'content-container';
-    messageElement.appendChild(contentContainer);
+    bodyContainer.appendChild(contentContainer);
     const button = this.createCopyButton(message);
     if (button) {
       messageElement.appendChild(button);
@@ -226,14 +229,7 @@ const messagesContainerRender = {
     return messageElement;
   },
 
-  loading: '<p class="loading-dots"></p>',
-
-  updateMessageContent(
-    messageElement: Element,
-    content: string,
-    markdown: boolean,
-    loading = false,
-  ) {
+  updateMessageContent(messageElement: Element, content: string, markdown: boolean) {
     const contentContainer = messageElement.querySelector('.content-container');
     if (!contentContainer) {
       return;
@@ -241,7 +237,7 @@ const messagesContainerRender = {
     requestAnimationFrame(async () => {
       if (markdown) {
         const parsed = await parseMarkdown(content);
-        contentContainer.innerHTML = loading ? `${parsed}${this.loading}` : parsed;
+        contentContainer.innerHTML = parsed;
       } else {
         contentContainer.innerHTML = content;
       }
@@ -285,7 +281,13 @@ const messagesContainerRender = {
     const {messagesContainer} = getElements();
     const messageElement = this.createMessage({role: 'assistant', content: ''});
     messageElement.className = 'message assistant stream';
-    this.updateMessageContent(messageElement, this.loading, false);
+    const bodyContainer = messageElement.querySelector('.body-container');
+    if (!bodyContainer) {
+      return;
+    }
+    const loadingElement = document.createElement('p');
+    loadingElement.className = 'loading-dots';
+    bodyContainer.appendChild(loadingElement);
     messagesContainer.appendChild(messageElement);
   },
 
@@ -313,7 +315,7 @@ const messagesContainerRender = {
     if (!messageElement) {
       return;
     }
-    this.updateMessageContent(messageElement, content, true, true);
+    this.updateMessageContent(messageElement, content, true);
   },
 
   clear(): void {

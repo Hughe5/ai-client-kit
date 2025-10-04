@@ -64,23 +64,22 @@
   font-size: 14px;
   line-height: 1.5;
 }
-.content-container {
+.body-container {
   padding: 0 14px;
   border-radius: 8px;
-  word-wrap: break-word;
   overflow-x: auto;
   color: black;
 }
 .message.user {
   margin-left: auto;
 }
-.message.user .content-container {
+.message.user .body-container {
   background: #e3f2fd;
 }
 .message.assistant {
   margin-right: auto;
 }
-.message.assistant .content-container {
+.message.assistant .body-container {
   background: #f1f1f1;
 }
 .button-container {
@@ -109,19 +108,19 @@
   border-radius: 50%;
   color: #fff;
 }
-
+.content-container {
+  word-wrap: break-word;
+}
 .message.assistant .content-container table {
   border-collapse: collapse;
   margin-block-start: 1em;
   margin-block-end: 1em;
 }
-
-.message.assistant .content-container th,
-.message.assistant .content-container td {
+.message.assistant .content-container table th,
+.message.assistant .content-container table td {
   border: 1px solid #ccc;
   padding: 8px;
 }
-
-.message.assistant .content-container th {
+.message.assistant .content-container table th {
   background-color: #e0e0e0;
 }
