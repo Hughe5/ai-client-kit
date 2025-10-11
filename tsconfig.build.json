@@ -5,6 +5,6 @@
     "emitDeclarationOnly": true,                         /* Only output d.ts files and not JavaScript files. */
     "outDir": "./dist",                                  /* Specify an output folder for all emitted files. */
   },
-  "include": ["src", "vite-env.d.ts"],
+  "include": ["src"],
   "exclude": ["**/*.test.ts"]
 }
