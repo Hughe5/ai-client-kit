@@ -234,6 +234,7 @@ interface SimpleMessage {
 interface AssistantMessage {
   role: 'assistant';
   content: string;
+  reasoning_content?: string;
   tool_calls?: ToolCall[];
 }
 

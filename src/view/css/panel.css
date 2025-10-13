@@ -111,16 +111,49 @@
 .content-container {
   word-wrap: break-word;
 }
-.message.assistant .content-container table {
+.message.assistant table {
   border-collapse: collapse;
   margin-block-start: 1em;
   margin-block-end: 1em;
 }
-.message.assistant .content-container table th,
-.message.assistant .content-container table td {
+.message.assistant table th,
+.message.assistant table td {
   border: 1px solid #ccc;
   padding: 8px;
 }
-.message.assistant .content-container table th {
+.message.assistant table th {
   background-color: #e0e0e0;
+}
+.message.assistant .reasoning-container {
+  padding: 0 14px;
+  border-radius: 8px;
+  overflow-x: auto;
+  color: #6b7280;
+  background-color: #f9fafb;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.message.assistant .reasoning-container .reasoning-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-top: 8px;
+  /*
+   * 此处用 margin-bottom 而不是 padding-bottom 是为了跟 reasoning-content 里面的 margin 重叠
+   * 避免间距过大
+   */
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+.message.assistant .reasoning-container .reasoning-header svg {
+  transform: rotate(90deg);
+  transition: transform 0.3s;
+}
+.message.assistant .reasoning-container.collapse .reasoning-header svg {
+  transform: rotate(0deg);
+  transition: transform 0.3s;
+}
+.message.assistant .reasoning-container.collapse .reasoning-content {
+  height: 0;
+  overflow: hidden;
 }

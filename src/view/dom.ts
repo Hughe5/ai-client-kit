@@ -197,6 +197,23 @@ const messagesContainerRender = {
       }
       return this.copyButton;
     },
+    reasoningContainer: null as HTMLTemplateElement | null,
+    initReasoningContainer() {
+      if (!this.reasoningContainer) {
+        const template = document.createElement('template');
+        template.innerHTML = `
+          <div class="reasoning-container collapse">
+            <div class="reasoning-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 1024 1024"><path d="M724.48 521.728c-1.8432 7.7824-5.7344 14.848-11.3664 20.48l-341.9136 342.016c-16.6912 16.6912-43.7248 16.6912-60.3136 0s-16.6912-43.7248 0-60.3136L622.6944 512 310.8864 200.0896c-16.6912-16.6912-16.6912-43.7248 0-60.3136 16.6912-16.6912 43.7248-16.6912 60.3136 0l341.9136 341.9136c10.8544 10.8544 14.6432 26.112 11.3664 40.0384z" fill="currentColor"/></svg>
+              思考过程
+            </div>
+            <div class="reasoning-content"></div>
+          </div>
+        `;
+        this.reasoningContainer = template;
+      }
+      return this.reasoningContainer;
+    },
   },
 
   createCopyButton(message: Message) {
@@ -240,6 +257,21 @@ const messagesContainerRender = {
         contentContainer.innerHTML = parsed;
       } else {
         contentContainer.innerHTML = content;
+      }
+    });
+  },
+
+  updateMessageReasoningContent(messageElement: Element, content: string, markdown: boolean) {
+    const reasoningContent = messageElement.querySelector('.reasoning-content');
+    if (!reasoningContent) {
+      return;
+    }
+    requestAnimationFrame(async () => {
+      if (markdown) {
+        const parsed = await parseMarkdown(content);
+        reasoningContent.innerHTML = parsed;
+      } else {
+        reasoningContent.innerHTML = content;
       }
     });
   },
@@ -316,6 +348,24 @@ const messagesContainerRender = {
       return;
     }
     this.updateMessageContent(messageElement, content, true);
+  },
+
+  updateStreamMessageReasoningContent(content: string) {
+    const {messagesContainer} = getElements();
+    const messageElement = messagesContainer.querySelector('.message.assistant.stream');
+    if (!messageElement) {
+      return;
+    }
+    if (!messageElement.querySelector('.reasoning-container')) {
+      const template = this._templates.initReasoningContainer();
+      const clone = template.content.cloneNode(true) as DocumentFragment;
+      const reasoningContainer = clone.firstElementChild;
+      if (!reasoningContainer) {
+        return;
+      }
+      messageElement.prepend(reasoningContainer);
+    }
+    this.updateMessageReasoningContent(messageElement, content, true);
   },
 
   clear(): void {

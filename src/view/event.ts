@@ -90,6 +90,7 @@ function bindEvents(): void {
   messagesContainer.addEventListener('click', function (event: MouseEvent) {
     const target = event.target as HTMLElement;
     const copyButton = target.closest<HTMLElement>('[data-action="copy"]');
+    const reasoningHeader = target.closest<HTMLElement>('.reasoning-header');
     if (copyButton && !copyButton.classList.contains('copied')) {
       event.stopPropagation();
       const messageElement = copyButton.closest<HTMLElement>('.message');
@@ -115,6 +116,12 @@ function bindEvents(): void {
             copyButton.classList.remove('copied');
           }, 1500);
         });
+    }
+    if (reasoningHeader) {
+      const reasoningContainer = reasoningHeader.parentElement;
+      if (reasoningContainer) {
+        reasoningContainer.classList.toggle('collapse');
+      }
     }
   });
 }

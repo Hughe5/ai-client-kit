@@ -51,6 +51,8 @@ export class AIChatPanel {
   pushStreamMessage = messagesContainerRender.pushStreamMessage.bind(messagesContainerRender);
   updateStreamMessageContent =
     messagesContainerRender.updateStreamMessageContent.bind(messagesContainerRender);
+  updateStreamMessageReasoningContent =
+    messagesContainerRender.updateStreamMessageReasoningContent.bind(messagesContainerRender);
   constructor(config: Config) {
     const {container} = config;
     if (!container) {

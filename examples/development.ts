@@ -33,6 +33,7 @@ const main = async () => {
       agent.pushMessage(message);
       panel.pushStreamMessage();
       const generator = agent.invoke();
+      let reasoningMarkdown = '';
       let markdown = '';
       while (true) {
         const {value, done} = await generator.next();
@@ -41,6 +42,10 @@ const main = async () => {
             agent.pushMessage(value);
           }
           break;
+        }
+        if (value.choices[0]?.delta.reasoning_content) {
+          reasoningMarkdown += value.choices[0].delta.reasoning_content;
+          panel.updateStreamMessageReasoningContent(reasoningMarkdown);
         }
         if (value.choices[0]?.delta.content) {
           markdown += value.choices[0].delta.content;
