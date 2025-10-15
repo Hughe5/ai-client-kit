@@ -315,10 +315,6 @@ class Agent extends ToolManager {
           const srcStr = typeof srcValue === 'string' ? srcValue : '';
           return objStr + srcStr;
         }
-        // 对于数组可以在这里添加特殊处理逻辑（如果需要）
-        // if (Array.isArray(objValue) && Array.isArray(srcValue)) {
-        //   return [...objValue, ...srcValue];
-        // }
         // 其他情况使用默认合并行为
         return undefined;
       },
