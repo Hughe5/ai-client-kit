@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-// 只能从 index.ts 引入
+// 只能从 src/index.ts 引入
 import {AIChatPanel, Agent, type Message} from '../src';
 
 const main = async () => {
