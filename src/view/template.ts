@@ -16,9 +16,7 @@
 
 import buttonCSS from './css/button.css?inline';
 import tooltipCSS from './css/tooltip.css?inline';
-import popupCSS from './css/popup.css?inline';
 import alertCSS from './css/alert.css?inline';
-import selectCSS from './css/select.css?inline';
 import loadingCSS from './css/loading.css?inline';
 import panelCSS from './css/panel.css?inline';
 import commonCSS from './css/common.css?inline';
@@ -26,9 +24,7 @@ import commonCSS from './css/common.css?inline';
 const combinedCSS = [
   buttonCSS,
   tooltipCSS,
-  popupCSS,
   alertCSS,
-  selectCSS,
   loadingCSS,
   panelCSS,
   commonCSS,
