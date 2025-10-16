@@ -33,8 +33,8 @@ const main = async () => {
       agent.pushMessage(message);
       panel.pushStreamMessage();
       const generator = agent.invoke();
-      let reasoningMarkdown = '';
-      let markdown = '';
+      let reasoningContentMarkdownStr = '';
+      let contentMarkdownStr = '';
       while (true) {
         const {value, done} = await generator.next();
         if (done) {
@@ -44,12 +44,12 @@ const main = async () => {
           break;
         }
         if (value.choices[0]?.delta.reasoning_content) {
-          reasoningMarkdown += value.choices[0].delta.reasoning_content;
-          panel.updateStreamMessageReasoningContent(reasoningMarkdown);
+          reasoningContentMarkdownStr += value.choices[0].delta.reasoning_content;
+          panel.updateStreamMessageReasoningContent(reasoningContentMarkdownStr);
         }
         if (value.choices[0]?.delta.content) {
-          markdown += value.choices[0].delta.content;
-          panel.updateStreamMessageContent(markdown);
+          contentMarkdownStr += value.choices[0].delta.content;
+          panel.updateStreamMessageContent(contentMarkdownStr);
         }
       }
     } catch (error) {
