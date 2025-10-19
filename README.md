@@ -14,7 +14,7 @@
 
 ## 安装
 
-使用 npm 或 yarn：
+使用 npm 或 yarn
 
 ```bash
 npm install ai-client-kit
