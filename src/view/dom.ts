@@ -246,33 +246,14 @@ const messagesContainerRender = {
     return messageElement;
   },
 
-  updateMessageContent(messageElement: Element, content: string, markdown: boolean) {
+  updateMessageContent(messageElement: Element, content: string) {
     const contentContainer = messageElement.querySelector('.content-container');
     if (!contentContainer) {
       return;
     }
     requestAnimationFrame(async () => {
-      if (markdown) {
-        const parsed = await parseMarkdown(content);
-        contentContainer.innerHTML = parsed;
-      } else {
-        contentContainer.innerHTML = content;
-      }
-    });
-  },
-
-  updateMessageReasoningContent(messageElement: Element, content: string, markdown: boolean) {
-    const reasoningContent = messageElement.querySelector('.reasoning-content');
-    if (!reasoningContent) {
-      return;
-    }
-    requestAnimationFrame(async () => {
-      if (markdown) {
-        const parsed = await parseMarkdown(content);
-        reasoningContent.innerHTML = parsed;
-      } else {
-        reasoningContent.innerHTML = content;
-      }
+      const parsed = await parseMarkdown(content);
+      contentContainer.innerHTML = parsed;
     });
   },
 
@@ -284,7 +265,7 @@ const messagesContainerRender = {
     const {role, content} = message;
     const messageElement = this.createMessage(message);
     messageElement.className = `message ${role}`;
-    this.updateMessageContent(messageElement, content, true);
+    this.updateMessageContent(messageElement, content);
     messagesContainer.appendChild(messageElement);
     /**
      * 把新加的 user message 滚动到距离顶部 12px 的位置，下面腾出来的空间用来渲染 assistant message
@@ -309,10 +290,10 @@ const messagesContainerRender = {
     }
   },
 
-  pushStreamMessage() {
+  pushLoadingMessage() {
     const {messagesContainer} = getElements();
     const messageElement = this.createMessage({role: 'assistant', content: ''});
-    messageElement.className = 'message assistant stream';
+    messageElement.className = 'message assistant loading';
     const bodyContainer = messageElement.querySelector('.body-container');
     if (!bodyContainer) {
       return;
@@ -323,36 +304,36 @@ const messagesContainerRender = {
     messagesContainer.appendChild(messageElement);
   },
 
-  finishStreamMessage() {
+  finishLoadingMessage() {
     const {messagesContainer} = getElements();
     /**
      * 这里必须使用 requestAnimationFrame
      * 因为 updateMessageContent 里已经使用了 requestAnimationFrame
-     * 确保 finishStreamMessage 在最后一次的 updateMessageContent 执行之后再执行
+     * 确保 finishLoadingMessage 在最后一次的 updateMessageContent 执行之后再执行
      */
     requestAnimationFrame(() => {
-      const messageElement = messagesContainer.querySelector('.message.assistant.stream');
+      const messageElement = messagesContainer.querySelector('.message.assistant.loading');
       if (!messageElement) {
         return;
       }
-      messageElement.classList.remove('stream');
+      messageElement.classList.remove('loading');
       const loadingElement = messageElement.querySelector('.loading-dots');
       loadingElement?.remove();
     });
   },
 
-  updateStreamMessageContent(content: string) {
+  updateLoadingMessageContent(content: string) {
     const {messagesContainer} = getElements();
-    const messageElement = messagesContainer.querySelector('.message.assistant.stream');
+    const messageElement = messagesContainer.querySelector('.message.assistant.loading');
     if (!messageElement) {
       return;
     }
-    this.updateMessageContent(messageElement, content, true);
+    this.updateMessageContent(messageElement, content);
   },
 
-  updateStreamMessageReasoningContent(content: string) {
+  updateLoadingMessageReasoningContent(content: string) {
     const {messagesContainer} = getElements();
-    const messageElement = messagesContainer.querySelector('.message.assistant.stream');
+    const messageElement = messagesContainer.querySelector('.message.assistant.loading');
     if (!messageElement) {
       return;
     }
@@ -365,7 +346,14 @@ const messagesContainerRender = {
       }
       messageElement.prepend(reasoningContainer);
     }
-    this.updateMessageReasoningContent(messageElement, content, true);
+    const reasoningContent = messageElement.querySelector('.reasoning-content');
+    if (!reasoningContent) {
+      return;
+    }
+    requestAnimationFrame(async () => {
+      const parsed = await parseMarkdown(content);
+      reasoningContent.innerHTML = parsed;
+    });
   },
 
   clear(): void {

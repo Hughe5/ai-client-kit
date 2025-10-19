@@ -32,16 +32,25 @@ const main = async () => {
     try {
       agent.pushMessage(message);
       panel.pushLoadingMessage();
-      const response = await agent.invoke();
-      if (!response) {
-        return;
-      }
-      const {reasoning_content, content} = response;
-      if (reasoning_content) {
-        panel.updateLoadingMessageReasoningContent(reasoning_content);
-      }
-      if (content) {
-        panel.updateLoadingMessageContent(content);
+      const generator = agent.invokeStream();
+      let reasoningContentMarkdownStr = '';
+      let contentMarkdownStr = '';
+      while (true) {
+        const {value, done} = await generator.next();
+        if (done) {
+          if (value) {
+            agent.pushMessage(value);
+          }
+          break;
+        }
+        if (value.choices[0]?.delta.reasoning_content) {
+          reasoningContentMarkdownStr += value.choices[0].delta.reasoning_content;
+          panel.updateLoadingMessageReasoningContent(reasoningContentMarkdownStr);
+        }
+        if (value.choices[0]?.delta.content) {
+          contentMarkdownStr += value.choices[0].delta.content;
+          panel.updateLoadingMessageContent(contentMarkdownStr);
+        }
       }
     } catch (error) {
       const msg =

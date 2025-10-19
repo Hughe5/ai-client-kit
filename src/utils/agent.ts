@@ -235,7 +235,7 @@ interface AssistantMessage {
   role: 'assistant';
   content: string;
   reasoning_content?: string;
-  tool_calls?: ToolCall[];
+  tool_calls?: ToolCall[] | null;
 }
 
 interface ToolMessage {
@@ -254,6 +254,12 @@ interface Params {
 interface Chunk {
   choices: Array<{
     delta: AssistantMessage;
+  }>;
+}
+
+interface Result {
+  choices: Array<{
+    message: AssistantMessage;
   }>;
 }
 
@@ -321,7 +327,88 @@ class Agent extends ToolManager {
     );
   }
 
-  async *invoke(
+  async invoke(params = this.defaultParams): Promise<AssistantMessage | undefined> {
+    const {tools = [], roundsLeft = this.maxRounds} = params;
+    abort();
+    controller = new AbortController();
+    try {
+      const response = await fetch(this.url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: this.model,
+          messages: this.messages,
+          tools: this.getDefinitions(tools),
+          stream: false,
+        }),
+        signal: controller.signal,
+      });
+
+      if (controller.signal.aborted) {
+        throw new DOMException('请求已被取消', 'AbortError');
+      }
+
+      messagesContainerRender.finishLoadingMessage();
+
+      const result = (await response.json()) as Result;
+
+      const message = result?.choices?.[0]?.message;
+
+      if (!message) {
+        return;
+      }
+
+      /**
+       * 兼容有的大模型返回的 role 是 null
+       */
+      if (message.role === null) {
+        message.role = 'assistant';
+      }
+
+      const {content, role, tool_calls} = message;
+
+      if (!tool_calls?.length) {
+        return message;
+      }
+
+      this.messages.push({
+        content,
+        role,
+        tool_calls,
+      });
+
+      const promises = tool_calls.map(async (element) => {
+        const {
+          function: {name, arguments: args},
+          id,
+        } = element;
+        const resp = await this.call(name, JSON.parse(args));
+        this.messages.push({
+          content: resp,
+          role: 'tool',
+          tool_call_id: id,
+        });
+      });
+      await Promise.all(promises);
+
+      // 剩余轮次 > 0 时继续回调
+      if (roundsLeft - 1 > 0) {
+        this.invoke({tools: [], roundsLeft: roundsLeft - 1});
+      }
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.log('请求已被取消');
+        return;
+      }
+      throw error;
+    } finally {
+      controller = null;
+    }
+  }
+
+  async *invokeStream(
     params = this.defaultParams,
   ): AsyncGenerator<Chunk, AssistantMessage | undefined, void> {
     const {tools = [], roundsLeft = this.maxRounds} = params;
@@ -382,7 +469,7 @@ class Agent extends ToolManager {
         }
       }
 
-      messagesContainerRender.finishStreamMessage();
+      messagesContainerRender.finishLoadingMessage();
 
       const message = result?.choices?.[0]?.delta;
 
@@ -391,7 +478,7 @@ class Agent extends ToolManager {
       }
 
       /**
-       * 兼容有的模型返回的 role 是 null
+       * 兼容有的大模型返回的 role 是 null
        */
       if (message.role === null) {
         message.role = 'assistant';
@@ -425,7 +512,7 @@ class Agent extends ToolManager {
 
       // 剩余轮次 > 0 时继续回调
       if (roundsLeft - 1 > 0) {
-        this.invoke({tools: [], roundsLeft: roundsLeft - 1});
+        this.invokeStream({tools: [], roundsLeft: roundsLeft - 1});
       }
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {

@@ -21,14 +21,7 @@ import loadingCSS from './css/loading.css?inline';
 import panelCSS from './css/panel.css?inline';
 import commonCSS from './css/common.css?inline';
 
-const combinedCSS = [
-  buttonCSS,
-  tooltipCSS,
-  alertCSS,
-  loadingCSS,
-  panelCSS,
-  commonCSS,
-].join('\n');
+const combinedCSS = [buttonCSS, tooltipCSS, alertCSS, loadingCSS, panelCSS, commonCSS].join('\n');
 
 const template: HTMLTemplateElement = document.createElement('template');
 

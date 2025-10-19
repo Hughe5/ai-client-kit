@@ -48,11 +48,11 @@ export class AIChatPanel {
   on = eventManager.on.bind(eventManager);
   pushMessage = messagesContainerRender.pushMessage.bind(messagesContainerRender);
   pushMessages = messagesContainerRender.pushMessages.bind(messagesContainerRender);
-  pushStreamMessage = messagesContainerRender.pushStreamMessage.bind(messagesContainerRender);
-  updateStreamMessageContent =
-    messagesContainerRender.updateStreamMessageContent.bind(messagesContainerRender);
-  updateStreamMessageReasoningContent =
-    messagesContainerRender.updateStreamMessageReasoningContent.bind(messagesContainerRender);
+  pushLoadingMessage = messagesContainerRender.pushLoadingMessage.bind(messagesContainerRender);
+  updateLoadingMessageReasoningContent =
+    messagesContainerRender.updateLoadingMessageReasoningContent.bind(messagesContainerRender);
+  updateLoadingMessageContent =
+    messagesContainerRender.updateLoadingMessageContent.bind(messagesContainerRender);
   constructor(config: Config) {
     const {container} = config;
     if (!container) {
