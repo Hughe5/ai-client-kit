@@ -36,6 +36,7 @@ const main = async () => {
       if (!response) {
         return;
       }
+      agent.pushMessage(response);
       const {reasoning_content, content} = response;
       if (reasoning_content) {
         panel.updateLoadingMessageReasoningContent(reasoning_content);
