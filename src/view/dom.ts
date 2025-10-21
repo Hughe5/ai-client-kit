@@ -41,7 +41,6 @@ const parserMap = new Map<string, {parser: string; plugins?: Plugin[]}>([
   ['css', {parser: 'css', plugins: [parserPostcss]}],
   ['scss', {parser: 'css', plugins: [parserPostcss]}],
   ['markdown', {parser: 'markdown', plugins: [parserMarkdown]}],
-  ['json', {parser: 'json'}],
 ]);
 
 function remarkPrettier() {
