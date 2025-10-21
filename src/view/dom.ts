@@ -82,7 +82,11 @@ function remarkPrettier() {
       if (index === undefined || !parent) {
         return;
       }
-      const parts = node.value.split(/<br\s*\/?>/i);
+      const brTag = /<br\s*\/?>/i;
+      if (!brTag.test(node.value)) {
+        return;
+      }
+      const parts = node.value.split(brTag);
       const lang = parts.shift();
       if (!lang) {
         return;
