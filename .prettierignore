@@ -3,3 +3,4 @@ dist
 build
 tsconfig.json
 tsconfig.build.json
+package-lock.json
