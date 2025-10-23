@@ -69,7 +69,7 @@ function remarkPrettier() {
             node.value = formatted;
           })
           .catch((e) => {
-            console.warn(`Prettier 格式化失败 [${lang}]:`, e);
+            console.warn(`${lang} 格式化失败:`, e);
           }),
       );
     });
@@ -112,7 +112,7 @@ function remarkPrettier() {
             };
           })
           .catch((e) => {
-            console.warn(`Prettier 格式化失败 [${lang}]:`, e);
+            console.warn(`${lang} 格式化失败:`, e);
           }),
       );
     });
