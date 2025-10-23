@@ -43,17 +43,29 @@ const parserMap = new Map<string, {parser: string; plugins?: Plugin[]}>([
   ['markdown', {parser: 'markdown', plugins: [parserMarkdown]}],
 ]);
 
-/**
- * 示例
- * ```md
- * | 绑定`'send' | 'create'`事件。 |
- * ```
- * 会被预处理为
- * ```md
- * | 绑定`'send' \| 'create'`事件。 |
- * ```
- */
 function preprocessor(value: string) {
+  /**
+   * 示例
+   * ```md
+   * **文本**文字紧挨着
+   * ```
+   * 会被预处理为
+   * ```md
+   * **文本** 文字紧挨着
+   * ```
+   */
+  value = value.replace(/\*\*([\s\S]*?)\*\*(?=[^\s\n\r])/g, '**$1** ');
+
+  /**
+   * 示例
+   * ```md
+   * | 绑定`'send' | 'create'`事件。 |
+   * ```
+   * 会被预处理为
+   * ```md
+   * | 绑定`'send' \| 'create'`事件。 |
+   * ```
+   */
   if (!value.includes('|')) {
     return value;
   }
