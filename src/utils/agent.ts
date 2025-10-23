@@ -16,7 +16,6 @@
 
 import Ajv, {type ValidateFunction, type AnySchema} from 'ajv';
 import {mergeWith} from 'lodash-es';
-import {messagesContainerRender} from '../view/dom';
 
 let controller: AbortController | null = null;
 
