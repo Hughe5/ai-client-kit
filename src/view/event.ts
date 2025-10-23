@@ -143,19 +143,11 @@ class EventManager {
     create: [],
   };
 
-  on(type: 'send', listener: EventListener<'send'>): void;
-
-  on(type: 'create', listener: EventListener<'create'>): void;
-
-  on<T extends EventType>(type: T, listener: EventListener<T>): void {
+  on = <T extends EventType>(type: T, listener: EventListener<T>): void => {
     this.events[type].push(listener);
-  }
+  };
 
-  emit(type: 'send', message: Message): Promise<void>;
-
-  emit(type: 'create'): Promise<void>;
-
-  async emit<T extends EventType>(type: T, ...args: EventParams[T]): Promise<void> {
+  emit = async <T extends EventType>(type: T, ...args: EventParams[T]): Promise<void> => {
     for (const listener of this.events[type]) {
       try {
         await listener(...args);
@@ -163,7 +155,7 @@ class EventManager {
         console.error(`Error in event listener for ${type}:`, error);
       }
     }
-  }
+  };
 }
 
 const eventManager = new EventManager();

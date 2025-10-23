@@ -180,9 +180,8 @@ function getElements(): Elements {
   return elements!;
 }
 
-const messagesContainerRender = {
-  // 缓存DOM模板，避免重复创建和解析HTML字符串
-  _templates: {
+class MessagesContainerRender {
+  #templates = {
     copyButton: null as HTMLTemplateElement | null,
     initCopyButton() {
       if (!this.copyButton) {
@@ -217,10 +216,14 @@ const messagesContainerRender = {
       }
       return this.reasoningContainer;
     },
-  },
+  };
+
+  #height = 0;
+  #animationId: number | null = null;
+  #observer: ResizeObserver | null = null;
 
   createCopyButton(message: Message) {
-    const template = this._templates.initCopyButton();
+    const template = this.#templates.initCopyButton();
     const clone = template.content.cloneNode(true) as DocumentFragment;
     const buttonContainer = clone.firstElementChild;
     if (!buttonContainer) {
@@ -232,7 +235,7 @@ const messagesContainerRender = {
     }
 
     return buttonContainer;
-  },
+  }
 
   createMessage(message: Message) {
     const messageElement = document.createElement('div');
@@ -247,7 +250,7 @@ const messagesContainerRender = {
       messageElement.appendChild(button);
     }
     return messageElement;
-  },
+  }
 
   updateMessageContent(messageElement: Element, content: string) {
     const contentContainer = messageElement.querySelector('.content-container');
@@ -258,9 +261,9 @@ const messagesContainerRender = {
       const parsed = await parseMarkdown(content);
       contentContainer.innerHTML = parsed;
     });
-  },
+  }
 
-  pushMessage(message: Message | undefined) {
+  pushMessage = (message: Message | undefined) => {
     if (!message) {
       return;
     }
@@ -282,20 +285,23 @@ const messagesContainerRender = {
         behavior: 'smooth',
       });
     }
-  },
+  };
 
-  pushMessages(messages: Message[]) {
+  pushMessages = (messages: Message[]) => {
     if (!messages.length) {
       return;
     }
     for (const element of messages) {
       this.pushMessage(element);
     }
-  },
+  };
 
-  pushLoadingMessage() {
+  pushLoadingMessage = () => {
     const {messagesContainer} = getElements();
-    const messageElement = this.createMessage({role: 'assistant', content: ''});
+    const messageElement = this.createMessage({
+      role: 'assistant',
+      content: '',
+    });
     messageElement.className = 'message assistant loading';
     const bodyContainer = messageElement.querySelector('.body-container');
     if (!bodyContainer) {
@@ -305,9 +311,9 @@ const messagesContainerRender = {
     loadingElement.className = 'loading-dots';
     bodyContainer.appendChild(loadingElement);
     messagesContainer.appendChild(messageElement);
-  },
+  };
 
-  finishLoadingMessage() {
+  finishLoadingMessage = () => {
     const {messagesContainer} = getElements();
     /**
      * 这里必须使用 requestAnimationFrame
@@ -323,25 +329,25 @@ const messagesContainerRender = {
       const loadingElement = messageElement.querySelector('.loading-dots');
       loadingElement?.remove();
     });
-  },
+  };
 
-  updateLoadingMessageContent(content: string) {
+  updateLoadingMessageContent = (content: string) => {
     const {messagesContainer} = getElements();
     const messageElement = messagesContainer.querySelector('.message.assistant.loading');
     if (!messageElement) {
       return;
     }
     this.updateMessageContent(messageElement, content);
-  },
+  };
 
-  updateLoadingMessageReasoningContent(content: string) {
+  updateLoadingMessageReasoningContent = (content: string) => {
     const {messagesContainer} = getElements();
     const messageElement = messagesContainer.querySelector('.message.assistant.loading');
     if (!messageElement) {
       return;
     }
     if (!messageElement.querySelector('.reasoning-container')) {
-      const template = this._templates.initReasoningContainer();
+      const template = this.#templates.initReasoningContainer();
       const clone = template.content.cloneNode(true) as DocumentFragment;
       const reasoningContainer = clone.firstElementChild;
       if (!reasoningContainer) {
@@ -357,21 +363,17 @@ const messagesContainerRender = {
       const parsed = await parseMarkdown(content);
       reasoningContent.innerHTML = parsed;
     });
-  },
+  };
 
   clear(): void {
     const elements = getElements();
     elements.messagesContainer.innerHTML = '';
-  },
-
-  height: 0,
-  animationId: null as number | null,
-  observer: null as ResizeObserver | null,
+  }
 
   setPaddingBottom() {
-    if (this.observer) {
-      this.observer.disconnect();
-      this.observer = null;
+    if (this.#observer) {
+      this.#observer.disconnect();
+      this.#observer = null;
     }
     const {root, messagesContainer} = getElements();
     const container = root.querySelector('.app-container');
@@ -381,25 +383,25 @@ const messagesContainerRender = {
     const MESSAGES_CONTAINER_PADDING_TOP = 12; // .messages-container 元素的 padding-top
     const BOTTOM_CONTAINER_CONTENT_HEIGHT = 142; // .bottom-container 元素的内容高度
     const BOTTOM_CONTAINER_MARGIN = 12; // .bottom-container 元素的 margin
-    this.observer = new ResizeObserver((entries) => {
+    this.#observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const {height} = entry.contentRect;
-        if (height === this.height) {
+        if (height === this.#height) {
           continue;
         }
-        this.height = height;
-        if (this.animationId !== null) {
-          cancelAnimationFrame(this.animationId);
+        this.#height = height;
+        if (this.#animationId !== null) {
+          cancelAnimationFrame(this.#animationId);
         }
-        this.animationId = requestAnimationFrame(() => {
+        this.#animationId = requestAnimationFrame(() => {
           messagesContainer.style.paddingBottom = `${height - MESSAGES_CONTAINER_PADDING_TOP - BOTTOM_CONTAINER_CONTENT_HEIGHT - BOTTOM_CONTAINER_MARGIN * 2}px`;
-          this.animationId = null;
+          this.#animationId = null;
         });
       }
     });
-    this.observer.observe(container);
-  },
-};
+    this.#observer.observe(container);
+  }
+}
 
 // 输入框操作
 const userInputRender = {
@@ -462,6 +464,8 @@ const alertRender = {
     });
   },
 };
+
+const messagesContainerRender = new MessagesContainerRender();
 
 export {
   cacheElements,
