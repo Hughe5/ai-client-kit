@@ -43,6 +43,37 @@ const parserMap = new Map<string, {parser: string; plugins?: Plugin[]}>([
   ['markdown', {parser: 'markdown', plugins: [parserMarkdown]}],
 ]);
 
+/**
+ * 示例
+ * ```md
+ * | 绑定`'send' | 'create'`事件。 |
+ * ```
+ * 会被预处理为
+ * ```md
+ * | 绑定`'send' \| 'create'`事件。 |
+ * ```
+ */
+function preprocessor(value: string) {
+  if (!value.includes('|')) {
+    return value;
+  }
+  return value
+    .split('\n')
+    .map((line) => {
+      if (!/^\s*\|.*\|/.test(line)) {
+        return line;
+      }
+      return line.replace(/`([^`\n\r]*?)`/g, (match, inner) => {
+        if (!inner.includes('|')) {
+          return match;
+        }
+        const escaped = inner.replace(/\|/g, '\\|');
+        return `\`${escaped}\``;
+      });
+    })
+    .join('\n');
+}
+
 function remarkPrettier() {
   return async (tree: Root) => {
     const promises: Promise<void>[] = [];
@@ -129,7 +160,7 @@ async function parseMarkdown(markdown: string): Promise<string> {
     .use(remarkPrettier) // 格式化 code
     .use(remarkRehype, {allowDangerousHtml: true}) // Markdown AST -> HTML AST
     .use(rehypeStringify, {allowDangerousHtml: true}) // HTML AST -> HTML string
-    .process(markdown);
+    .process(preprocessor(markdown));
 
   const dirty = String(file);
 
