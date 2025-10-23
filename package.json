@@ -1,6 +1,6 @@
 {
   "name": "ai-client-kit",
-  "version": "2.0.26",
+  "version": "2.0.27",
   "description": "全 JavaScript 生态适用的 AI 集成套件，覆盖 Node.js 与任意前端框架，兼容多种大模型、聊天面板、Function Calling、Agent、工作流等。",
   "author": {
     "name": "Hughe5",
