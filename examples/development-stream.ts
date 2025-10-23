@@ -52,6 +52,7 @@ const main = async () => {
           panel.updateLoadingMessageContent(contentMarkdownStr);
         }
       }
+      panel.finishLoadingMessage();
     } catch (error) {
       const msg =
         error instanceof Error

@@ -350,8 +350,6 @@ class Agent extends ToolManager {
         throw new DOMException('请求已被取消', 'AbortError');
       }
 
-      messagesContainerRender.finishLoadingMessage();
-
       const result = (await response.json()) as Result;
 
       const message = result?.choices?.[0]?.message;
@@ -468,8 +466,6 @@ class Agent extends ToolManager {
           }
         }
       }
-
-      messagesContainerRender.finishLoadingMessage();
 
       const message = result?.choices?.[0]?.delta;
 

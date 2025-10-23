@@ -44,6 +44,7 @@ const main = async () => {
       if (content) {
         panel.updateLoadingMessageContent(content);
       }
+      panel.finishLoadingMessage();
     } catch (error) {
       const msg =
         error instanceof Error

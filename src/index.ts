@@ -53,6 +53,8 @@ export class AIChatPanel {
     messagesContainerRender.updateLoadingMessageReasoningContent.bind(messagesContainerRender);
   updateLoadingMessageContent =
     messagesContainerRender.updateLoadingMessageContent.bind(messagesContainerRender);
+  finishLoadingMessage =
+    messagesContainerRender.finishLoadingMessage.bind(messagesContainerRender);
   constructor(config: Config) {
     const {container} = config;
     if (!container) {
