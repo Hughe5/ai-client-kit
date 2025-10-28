@@ -37,7 +37,7 @@ template.innerHTML = `
                 </button>
             </div>
             <div class="user-input-container" id="user-input-container">
-                <textarea class="user-input" id="user-input" placeholder="和我聊天"></textarea>
+                <textarea class="user-input" id="user-input" placeholder="Enter -> 发送，Shift + Enter -> 换行"></textarea>
                 <div class="button-wrap">
                     <button class="icon square plain tooltip" id="submit-icon" type="button" aria-label="发送">
                         <div class="submit-icon">
