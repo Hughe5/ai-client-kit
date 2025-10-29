@@ -331,6 +331,14 @@ class MessagesContainerRender {
     });
   };
 
+  removeLoadingMessage = () => {
+    const {messagesContainer} = getElements();
+    requestAnimationFrame(() => {
+      const messageElement = messagesContainer.querySelector('.message.assistant.loading');
+      messageElement?.remove();
+    });
+  };
+
   updateLoadingMessageContent = (content: string) => {
     const {messagesContainer} = getElements();
     const messageElement = messagesContainer.querySelector('.message.assistant.loading');

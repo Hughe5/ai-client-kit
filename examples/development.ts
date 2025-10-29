@@ -34,6 +34,7 @@ const main = async () => {
       panel.pushLoadingMessage();
       const response = await agent.invoke();
       if (!response) {
+        panel.removeLoadingMessage();
         return;
       }
       agent.pushMessage(response);
