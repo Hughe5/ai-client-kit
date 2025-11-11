@@ -33,8 +33,8 @@ const handleSend = async (): Promise<void> => {
   if (!userInputRender.value) {
     return;
   }
-  const content = escapeHtml(userInputRender.value);
   try {
+    const content = escapeHtml(userInputRender.value);
     buttonRender.chatting();
     userInputRender.clear();
     const message: Message = {role: 'user', content};
