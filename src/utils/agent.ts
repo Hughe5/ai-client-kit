@@ -522,12 +522,12 @@ class Agent extends ToolManager {
 }
 
 export {
-  abort,
   type Parameters,
   type Definition,
   type Args,
   type Handler,
-  ToolManager,
   type Message,
+  abort,
+  ToolManager,
   Agent,
 };

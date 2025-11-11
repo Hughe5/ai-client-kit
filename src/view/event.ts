@@ -23,23 +23,25 @@ import {
 } from './dom';
 import {type Message, abort} from '../utils/agent';
 
+const escapeHtml = (text: string): string => {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+};
+
 const handleSend = async (): Promise<void> => {
-  const userInput = userInputRender.value;
-  if (!userInput) {
+  if (!userInputRender.value) {
     return;
   }
+  const content = escapeHtml(userInputRender.value);
   try {
     buttonRender.chatting();
     userInputRender.clear();
-    userInputRender.toggleReadOnly(true);
-    // 将 HTML 标签转换为 Markdown 行内代码块
-    const processedContent = userInput.replace(/<([^>]+)>/g, '`<$1>`');
-    const message: Message = {role: 'user', content: processedContent};
+    const message: Message = {role: 'user', content};
     messagesContainerRender.pushMessage(message);
     await eventManager.emit('send', message);
   } finally {
     buttonRender.default();
-    userInputRender.toggleReadOnly(false);
     userInputRender.focus();
   }
 };
@@ -48,7 +50,6 @@ const handleSend = async (): Promise<void> => {
 const handleStop = (): void => {
   abort();
   buttonRender.default();
-  userInputRender.toggleReadOnly(false);
   userInputRender.focus();
 };
 

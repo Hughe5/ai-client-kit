@@ -432,11 +432,6 @@ const userInputRender = {
     const elements = getElements();
     elements.userInput.focus();
   },
-
-  toggleReadOnly(value: boolean): void {
-    const elements = getElements();
-    elements.userInput.readOnly = value;
-  },
 };
 
 // 按钮状态管理
