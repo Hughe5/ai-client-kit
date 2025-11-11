@@ -53,7 +53,6 @@ export class AIChatPanel {
     messagesContainerRender.updateLoadingMessageReasoningContent;
   updateLoadingMessageContent = messagesContainerRender.updateLoadingMessageContent;
   finishLoadingMessage = messagesContainerRender.finishLoadingMessage;
-  removeLoadingMessage = messagesContainerRender.removeLoadingMessage;
   constructor(config: Config) {
     const {container} = config;
     if (!container) {

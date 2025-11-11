@@ -29,12 +29,12 @@ const main = async () => {
   };
   init();
   panel.on('send', async (message: Message) => {
+    let reasoningContentMarkdownStr = '';
+    let contentMarkdownStr = '';
     try {
       agent.pushMessage(message);
       panel.pushLoadingMessage();
       const generator = agent.invokeStream();
-      let reasoningContentMarkdownStr = '';
-      let contentMarkdownStr = '';
       while (true) {
         const {value, done} = await generator.next();
         if (done) {
@@ -54,6 +54,17 @@ const main = async () => {
       }
       panel.finishLoadingMessage();
     } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.log('请求已被取消');
+        if (!reasoningContentMarkdownStr) {
+          panel.updateLoadingMessageReasoningContent('请求已被取消');
+        }
+        if (!contentMarkdownStr) {
+          panel.updateLoadingMessageContent('请求已被取消');
+        }
+        panel.finishLoadingMessage();
+        return;
+      }
       const msg =
         error instanceof Error
           ? error.message

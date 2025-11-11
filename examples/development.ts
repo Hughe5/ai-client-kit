@@ -34,7 +34,6 @@ const main = async () => {
       panel.pushLoadingMessage();
       const response = await agent.invoke();
       if (!response) {
-        panel.removeLoadingMessage();
         return;
       }
       agent.pushMessage(response);
@@ -47,6 +46,13 @@ const main = async () => {
       }
       panel.finishLoadingMessage();
     } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.log('请求已被取消');
+        panel.updateLoadingMessageReasoningContent('请求已被取消');
+        panel.updateLoadingMessageContent('请求已被取消');
+        panel.finishLoadingMessage();
+        return;
+      }
       const msg =
         error instanceof Error
           ? error.message

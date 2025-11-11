@@ -394,12 +394,6 @@ class Agent extends ToolManager {
       if (roundsLeft - 1 > 0) {
         this.invoke({tools: [], roundsLeft: roundsLeft - 1});
       }
-    } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
-        console.log('请求已被取消');
-        return;
-      }
-      throw error;
     } finally {
       controller = null;
     }
@@ -509,12 +503,6 @@ class Agent extends ToolManager {
       if (roundsLeft - 1 > 0) {
         this.invokeStream({tools: [], roundsLeft: roundsLeft - 1});
       }
-    } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
-        console.log('请求已被取消');
-        return;
-      }
-      throw error;
     } finally {
       controller = null;
     }
