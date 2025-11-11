@@ -1,6 +1,6 @@
 {
   "name": "ai-client-kit",
-  "version": "2.0.30",
+  "version": "2.0.31",
   "description": "一款 AI 集成套件，适配任意前端框架，兼容多种大模型、聊天面板、Function Calling、Agent、工作流等。",
   "author": {
     "name": "Hughe5",
