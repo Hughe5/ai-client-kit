@@ -56,9 +56,6 @@ const main = async () => {
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
         console.log('请求已被取消');
-        if (!reasoningContentMarkdownStr) {
-          panel.updateLoadingMessageReasoningContent('请求已被取消');
-        }
         if (!contentMarkdownStr) {
           panel.updateLoadingMessageContent('请求已被取消');
         }
