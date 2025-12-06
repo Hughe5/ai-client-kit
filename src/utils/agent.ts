@@ -392,7 +392,7 @@ class Agent extends ToolManager {
 
       // 剩余轮次 > 0 时继续回调
       if (roundsLeft - 1 > 0) {
-        this.invoke({tools: [], roundsLeft: roundsLeft - 1});
+        return await this.invoke({tools: [], roundsLeft: roundsLeft - 1});
       }
     } finally {
       controller = null;
