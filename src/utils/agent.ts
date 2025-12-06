@@ -16,6 +16,7 @@
 
 import Ajv, {type ValidateFunction, type AnySchema} from 'ajv';
 import {mergeWith} from 'lodash-es';
+import {messagesContainerRender} from '../view/dom';
 
 let controller: AbortController | null = null;
 
@@ -262,6 +263,8 @@ interface Result {
   }>;
 }
 
+type StreamResult = AsyncGenerator<Chunk, AssistantMessage | StreamResult | undefined, void>;
+
 class Agent extends ToolManager {
   model = '';
   url = '';
@@ -370,6 +373,12 @@ class Agent extends ToolManager {
         return message;
       }
 
+      if (content) {
+        messagesContainerRender.pushLoadingMessage();
+        requestAnimationFrame(() => messagesContainerRender.updateLoadingMessageContent(content));
+        messagesContainerRender.finishLoadingMessage();
+      }
+
       this.messages.push({
         content,
         role,
@@ -392,6 +401,7 @@ class Agent extends ToolManager {
 
       // 剩余轮次 > 0 时继续回调
       if (roundsLeft - 1 > 0) {
+        messagesContainerRender.pushLoadingMessage();
         return await this.invoke({tools: [], roundsLeft: roundsLeft - 1});
       }
     } finally {
@@ -399,9 +409,7 @@ class Agent extends ToolManager {
     }
   }
 
-  async *invokeStream(
-    params = this.defaultParams,
-  ): AsyncGenerator<Chunk, AssistantMessage | undefined, void> {
+  async *invokeStream(params = this.defaultParams): StreamResult {
     const {tools = [], roundsLeft = this.maxRounds} = params;
     abort();
     controller = new AbortController();
@@ -450,7 +458,7 @@ class Agent extends ToolManager {
           const jsonStr = item.trim().replace(/^data: /, '');
           try {
             const json = JSON.parse(buffer + jsonStr);
-            result = this.merge(result, json, ['content']);
+            result = this.merge(result, json, ['content', 'arguments']);
             yield json;
             buffer = '';
           } catch (error) {
@@ -501,7 +509,7 @@ class Agent extends ToolManager {
 
       // 剩余轮次 > 0 时继续回调
       if (roundsLeft - 1 > 0) {
-        this.invokeStream({tools: [], roundsLeft: roundsLeft - 1});
+        return this.invokeStream({tools: [], roundsLeft: roundsLeft - 1});
       }
     } finally {
       controller = null;
@@ -515,6 +523,8 @@ export {
   type Args,
   type Handler,
   type Message,
+  type AssistantMessage,
+  type StreamResult,
   abort,
   ToolManager,
   Agent,

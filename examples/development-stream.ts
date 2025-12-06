@@ -15,7 +15,7 @@
  */
 
 // 只能从 src/index.ts 引入
-import {AIChatPanel, Agent, type Message} from '../src';
+import {AIChatPanel, Agent, type Message, type StreamResult, type AssistantMessage} from '../src';
 
 const main = async () => {
   const container = document.getElementById('container');
@@ -28,37 +28,46 @@ const main = async () => {
     panel.pushMessage({role: 'assistant', content: 'hello'});
   };
   init();
-  panel.on('send', async (message: Message) => {
+  function isAssistantMessage(v: AssistantMessage | StreamResult): v is AssistantMessage {
+    return 'role' in v;
+  }
+  async function processGenerator(generator: StreamResult): Promise<void> {
+    panel.pushLoadingMessage();
     let reasoningContentMarkdownStr = '';
     let contentMarkdownStr = '';
+    while (true) {
+      const {value, done} = await generator.next();
+      if (done) {
+        if (value) {
+          panel.finishLoadingMessage();
+          if (isAssistantMessage(value)) {
+            agent.pushMessage(value);
+          } else {
+            await processGenerator(value);
+          }
+        }
+        break;
+      }
+      const delta = value.choices?.[0]?.delta;
+      if (delta?.reasoning_content) {
+        reasoningContentMarkdownStr += delta.reasoning_content;
+        panel.updateLoadingMessageReasoningContent(reasoningContentMarkdownStr);
+      }
+      if (delta?.content) {
+        contentMarkdownStr += delta.content;
+        panel.updateLoadingMessageContent(contentMarkdownStr);
+      }
+    }
+  }
+  panel.on('send', async (message: Message) => {
     try {
       agent.pushMessage(message);
-      panel.pushLoadingMessage();
       const generator = agent.invokeStream();
-      while (true) {
-        const {value, done} = await generator.next();
-        if (done) {
-          if (value) {
-            agent.pushMessage(value);
-          }
-          break;
-        }
-        if (value.choices[0]?.delta.reasoning_content) {
-          reasoningContentMarkdownStr += value.choices[0].delta.reasoning_content;
-          panel.updateLoadingMessageReasoningContent(reasoningContentMarkdownStr);
-        }
-        if (value.choices[0]?.delta.content) {
-          contentMarkdownStr += value.choices[0].delta.content;
-          panel.updateLoadingMessageContent(contentMarkdownStr);
-        }
-      }
-      panel.finishLoadingMessage();
+      await processGenerator(generator);
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
         console.log('请求已被取消');
-        if (!contentMarkdownStr) {
-          panel.updateLoadingMessageContent('请求已被取消');
-        }
+        panel.updateLoadingMessageContent('请求已被取消');
         panel.finishLoadingMessage();
         return;
       }

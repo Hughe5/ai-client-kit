@@ -19,7 +19,7 @@ import {eventManager} from './view/event';
 import {init} from './view/index';
 import {template} from './view/template';
 export {tools} from './utils/tools';
-export {Agent, type Message} from './utils/agent';
+export {Agent, type Message, type StreamResult, type AssistantMessage} from './utils/agent';
 
 class Panel extends HTMLElement {
   constructor() {

@@ -298,19 +298,24 @@ class MessagesContainerRender {
 
   pushLoadingMessage = () => {
     const {messagesContainer} = getElements();
-    const messageElement = this.createMessage({
-      role: 'assistant',
-      content: '',
+    requestAnimationFrame(() => {
+      if (messagesContainer.querySelector('.message.assistant.loading')) {
+        return;
+      }
+      const messageElement = this.createMessage({
+        role: 'assistant',
+        content: '',
+      });
+      messageElement.className = 'message assistant loading';
+      const bodyContainer = messageElement.querySelector('.body-container');
+      if (!bodyContainer) {
+        return;
+      }
+      const loadingElement = document.createElement('p');
+      loadingElement.className = 'loading-dots';
+      bodyContainer.appendChild(loadingElement);
+      messagesContainer.appendChild(messageElement);
     });
-    messageElement.className = 'message assistant loading';
-    const bodyContainer = messageElement.querySelector('.body-container');
-    if (!bodyContainer) {
-      return;
-    }
-    const loadingElement = document.createElement('p');
-    loadingElement.className = 'loading-dots';
-    bodyContainer.appendChild(loadingElement);
-    messagesContainer.appendChild(messageElement);
   };
 
   finishLoadingMessage = () => {
